@@ -139,7 +139,7 @@ make_SRS_ui_NAFC <- function(choices, labels = NULL,
   buttons[[length(labels)]] <- shiny::p(buttons[[length(labels)]],
                                         style = all_equal_button_style)
 
-  timer_script <- sprintf("can_advance = true;window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());}}, %d);console.log('Set timer');", timeout*1000)
+  timer_script <- sprintf("can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer');", timeout*1000)
 
   shiny::tags$div(id = id, buttons,
                   if(with_timer) shiny::tags$script(timer_script))
