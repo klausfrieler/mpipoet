@@ -1,0 +1,33 @@
+Package: mpipoet
+Title: Collection of tests and questionnaires for empirical poetry research.
+Version: 1.3.0
+Authors@R: c(
+  person("Klaus", "Frieler", email = "kf@omniversum.de", role = c("aut","cre")),
+  person("Blohm", "Stefan", email = "stefan.blohm@ae.mpg.de.de", role = c("ctb"))
+  )
+Maintainer: klaus frieler <kf@omniversum.de>
+Description: Implementation of  of tests and questionnaires for empirical poetry research at the Max Planck Institute for Empirical Aestheteics, Frankfurt/M., Germany, using on the psychTestR library.
+License: MIT + file LICENSE
+URL: https://github.com/klausfrieler/mpipoet
+BugReports: https://github.com/klausfrieler/mpipoet/issues
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.6.0)
+Imports:
+    dplyr (>= 1.0.2),
+    htmltools (>= 0.5.0),
+    methods,
+    psychTestR (>= 2.22.0),
+    purrr (>= 0.3.4),
+    R.utils (>= 2.10.1),
+    shiny (>= 1.5.0),
+    stringr (>= 1.4.0),
+    tibble (>= 3.0.3),
+    tidyverse (>= 1.3.0)
+Suggests:
+    codetools,
+    covr,
+    devtools,
+Remotes: pmcharrison/psychTestR
+RoxygenNote: 7.1.1
