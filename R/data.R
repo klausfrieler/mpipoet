@@ -5,9 +5,9 @@
 #' @docType data
 NULL
 
-#' mpipoet item bank
+#' SRS item bank
 #'
-#' The mpipoet item bank
-#' @name mpipoet_item_bank
+#' The SRS item bank
+#' @name SRS_item_bank
 #' @docType data
 NULL

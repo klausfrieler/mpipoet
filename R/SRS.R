@@ -50,9 +50,9 @@ SRS_practice <- function(dict = mpipoet::mpipoet_dict, timeout = 30){
 SRS_scoring <- function(){
   psychTestR::code_block(function(state, ...) {
     results <- psychTestR::get_results(state = state, complete = FALSE)
-    item_ids <- str_extract(names(results[[1]]), "[0-9]+")
+    item_ids <- stringr::str_extract(names(results[[1]]), "[0-9]+")
     answers <- sprintf("item%s", results[[1]])
-    correct <- (SRS_item_bank %>% filter(type == "test", as.character(ID) %in% item_ids) %>% pull(correct)) == answers
+    correct <- (mpipoet::SRS_item_bank %>% filter(type == "test", as.character(ID) %in% item_ids) %>% pull(correct)) == answers
     #browser()
     psychTestR::save_result(state, label = "perc_correct", value = mean(correct))
     psychTestR::save_result(state, label = "num_items", value = length(item_ids))
