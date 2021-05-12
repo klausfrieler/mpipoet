@@ -266,7 +266,7 @@ SRS_standalone  <- function(title = NULL,
   )
   if(is.null(title)){
     #extract title as named vector from dictionary
-    title <- map_chr(languages, ~{dict$translate("SRS_TESTNAME", .x)})
+    title <- purrr::map_chr(languages, ~{dict$translate("SRS_TESTNAME", .x)})
     names(title) <- languages
 
   }
