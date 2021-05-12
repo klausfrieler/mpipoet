@@ -1,4 +1,4 @@
-SRS_item_page <- function(item_id, num_items_in_test, item_bank, dict = mpipoet_dict, timeout = 30){
+SRS_item_page <- function(item_id, num_items_in_test, item_bank, dict = mpipoet::mpipoet_dict, timeout = 30){
   item <- item_bank[item_id,]
   psychTestR::new_timeline(
     SRS_NAFC_page(label = sprintf("q%s", item$ID),
@@ -73,7 +73,7 @@ SRS_welcome_page <- function(dict = mpipoet::mpipoet_dict){
     ), dict = dict)
 }
 
-SRS_final_page <- function(dict = mpipoet_dict){
+SRS_final_page <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
     psychTestR::final_page(
       body = shiny::div(
@@ -95,7 +95,7 @@ SRS_feedback_with_score <- function(dict = mpipoet::mpipoet_dict){
       psychTestR::one_button_page(body = text,
                                   button_text = psychTestR::i18n("CONTINUE"))
       }),
-      dict = mpipoet_dict)
+      dict = dict)
 }
 
 #' SRS
