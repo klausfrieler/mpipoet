@@ -135,10 +135,10 @@ SRS <- function(num_items = 32L,
     SRS_main_test(num_items = num_items, dict = dict),
     if(with_feedback) SRS_feedback_with_score(dict = dict),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
-     psychTestR::code_block(function(state, ...){
-       results <- psychTestR::get_results(state, complete = F)
-       browser()
-     }),
+     # psychTestR::code_block(function(state, ...){
+     #   results <- psychTestR::get_results(state, complete = F)
+     #   browser()
+     # }),
     if(with_finish) SRS_final_page(),
     psychTestR::end_module())
 
