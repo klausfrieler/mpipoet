@@ -38,20 +38,12 @@ SRS_practice <- function(dict = mpipoet::mpipoet_dict, timeout = 30){
         shiny::p(psychTestR::i18n("EXAMPLE_FEEDBACK")),
         shiny::p(buttons)),
         button_text = psychTestR::i18n("CONTINUE")),
+      dict = dict),
+    psychTestR::new_timeline(
+      psychTestR::one_button_page(body = shiny::p(psychTestR::i18n("CONTINUE_MAIN_TEST")),
+                                  button_text = psychTestR::i18n("CONTINUE")),
       dict = dict)
-    # ,
-    # psychTestR::new_timeline(
-    #   SRS_NAFC_page(label = "ex2",
-    #                 prompt = shiny::div(
-    #                   shiny::h4(psychTestR::i18n("EXAMPLE")),
-    #                   shiny::p(psychTestR::i18n("EXAMPLE_FEEDBACK"))),
-    #                 choices = as.character(1:5),
-    #                 labels = c(practice_items %>% slice(2) %>% select(starts_with("item")) %>% as.vector(),
-    #                            psychTestR::i18n("CONTINUE")),
-    #                 save_answer = F,
-    #                 timeout = 0,
-    #                 disabled = TRUE),
-    #   dict = dict)
+
     )
 }
 
@@ -143,10 +135,10 @@ SRS <- function(num_items = 32L,
     SRS_main_test(num_items = num_items, dict = dict),
     if(with_feedback) SRS_feedback_with_score(dict = dict),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
-    # psychTestR::code_block(function(state, ...){
-    #   results <- psychTestR::get_results(state, complete = F)
-    #   browser()
-    # }),
+     psychTestR::code_block(function(state, ...){
+       results <- psychTestR::get_results(state, complete = F)
+       browser()
+     }),
     if(with_finish) SRS_final_page(),
     psychTestR::end_module())
 
