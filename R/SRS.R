@@ -9,7 +9,7 @@ SRS_item_page <- function(item_id, num_items_in_test, item_bank, dict = mpipoet_
                     if(item_id == 1)shiny::tags$script("var myTimer = false;"),
                     shiny::p(psychTestR::i18n("PROMPT", sub = list(time_out = as.character(timeout))))),
                   choices = as.character(1:5),
-                  labels = c(item %>% select(starts_with("item")) %>% as.vector(), psychTestR::i18n("ALL_EQUAL")),
+                  labels = c(item %>% dplyr::select(starts_with("item")) %>% as.vector(), psychTestR::i18n("ALL_EQUAL")),
                   save_answer = T
                 ), dict = dict)
 }
@@ -18,7 +18,7 @@ SRS_practice <- function(dict = mpipoet::mpipoet_dict, timeout = 30){
   practice_items <- mpipoet::SRS_item_bank %>% filter(type =="practice")
   buttons <- mapply(function(id, label) {
     shiny::actionButton(inputId = id, label = label, disabled = TRUE)
-  }, 1:4, practice_items %>% slice(2) %>% select(starts_with("item")) %>% as.vector(), SIMPLIFY = F, USE.NAMES = F)
+  }, 1:4, practice_items %>% dplyr::slice(2) %>% dplyr::select(starts_with("item")) %>% as.vector(), SIMPLIFY = F, USE.NAMES = F)
 
   psychTestR::join(
     psychTestR::new_timeline(
@@ -28,7 +28,7 @@ SRS_practice <- function(dict = mpipoet::mpipoet_dict, timeout = 30){
                       shiny::p(psychTestR::i18n("EXAMPLE_PROMPT")),
                       shiny::p(psychTestR::i18n("PROMPT", sub = list(time_out = as.character(timeout))))),
                     choices = as.character(1:5),
-                    labels = c(practice_items %>% slice(1) %>% select(starts_with("item")) %>% as.vector(), psychTestR::i18n("ALL_EQUAL")),
+                    labels = c(practice_items %>% dplyr::slice(1) %>% dplyr::select(starts_with("item")) %>% as.vector(), psychTestR::i18n("ALL_EQUAL")),
                     save_answer = F,
                     timeout = 0),
       dict = dict),

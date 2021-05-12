@@ -10,6 +10,12 @@ NULL
 #' @importFrom dplyr "pull"
 NULL
 
+#' @importFrom dplyr "select"
+NULL
+
+#' @importFrom dplyr "slice"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 
