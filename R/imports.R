@@ -22,6 +22,9 @@ NULL
 #' @importFrom dplyr "group_by"
 NULL
 
+#' @importFrom dplyr "n"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 
