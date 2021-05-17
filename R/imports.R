@@ -19,6 +19,9 @@ NULL
 #' @importFrom dplyr "ungroup"
 NULL
 
+#' @importFrom dplyr "group_by"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 
