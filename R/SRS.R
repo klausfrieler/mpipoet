@@ -85,6 +85,7 @@ make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
     page <-
       psychTestR::join(
         psychTestR::one_button_page(body = shiny::div(
+          shiny::tags$script("can_advance = false;"),
           shiny::h4(psychTestR::i18n("EXAMPLE")),
           shiny::p(psychTestR::i18n("EXAMPLE_FEEDBACK_CORRECT")),
           shiny::p(make_correct_buttons())),
@@ -134,7 +135,13 @@ SRS_scoring <- function(){
     results <- psychTestR::get_results(state = state, complete = FALSE)
     item_ids <- stringr::str_extract(names(results[[1]]), "[0-9]+")
     answers <- sprintf("item%s", results[[1]])
-    correct <- (mpipoet::SRS_item_bank %>% filter(type == "test", as.character(ID) %in% item_ids) %>% pull(correct)) == answers
+    #browser()
+    correct <- mpipoet::SRS_item_bank %>%
+      mutate(ID = as.character(ID)) %>% filter(type == "test", ID %in% item_ids) %>%
+      select(ID, correct) %>% left_join(tibble(ID = item_ids, answer = answers)) %>%
+      mutate(r = correct == answer) %>%
+      pull(r)
+    #correct <- (mpipoet::SRS_item_bank %>% filter(type == "test", as.character(ID) %in% item_ids) %>% pull(correct)) == answers
     psychTestR::save_result(state, label = "perc_correct", value = mean(correct))
     psychTestR::save_result(state, label = "num_items", value = length(item_ids))
     psychTestR::save_result(state, label = "num_correct", value = sum(correct))
@@ -170,9 +177,12 @@ SRS_feedback_with_score <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
     psychTestR::reactive_page(function(state,...){
       results <- psychTestR::get_results(state = state, complete = TRUE, add_session_info = F) %>% as.data.frame()
-      text <- psychTestR::i18n("SRS_FEEDBACK", sub = list(num_correct = results$SRS.num_correct,
-                                                          num_items = results$SRS.num_items,
-                                                          perc_correct = round(100*results$SRS.perc_correct, 1)))
+      text <- shiny::div(
+        shiny::tags$script("can_advance = false;"),
+        shiny::p(psychTestR::i18n("SRS_FEEDBACK",
+                                  sub = list(num_correct = results$SRS.num_correct,
+                                             num_items = results$SRS.num_items,
+                                             perc_correct = round(100*results$SRS.perc_correct, 1)))))
       psychTestR::one_button_page(body = text,
                                   button_text = psychTestR::i18n("CONTINUE"))
       }),
@@ -260,6 +270,7 @@ SRS_main_test <- function(num_items = NULL, timeout = 10){
       sum()
     messagef("Code block, seed %d", seed)
     item_sequence <- get_SRS_item_sequence(num_items, seed)
+    print(item_sequence)
     psychTestR::set_local(key = "item_sequence", value = item_sequence[1:num_items], state = state)
     psychTestR::set_local(key = "item_number", value = 1L, state = state)
 
