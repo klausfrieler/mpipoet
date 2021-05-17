@@ -25,6 +25,9 @@ NULL
 #' @importFrom dplyr "n"
 NULL
 
+#' @importFrom dplyr "left_join"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 
