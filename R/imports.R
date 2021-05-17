@@ -16,6 +16,9 @@ NULL
 #' @importFrom dplyr "slice"
 NULL
 
+#' @importFrom dplyr "ungroup"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 
