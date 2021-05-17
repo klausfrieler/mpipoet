@@ -6,8 +6,8 @@
 \usage{
 SRS_standalone(
   title = NULL,
-  num_items = 32L,
-  timeout = 30,
+  num_items = 36L,
+  timeout = 10,
   with_id = FALSE,
   with_welcome = TRUE,
   with_training = TRUE,

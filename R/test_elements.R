@@ -167,7 +167,10 @@ SRS_NAFC_page <- function(label, prompt, choices, labels = NULL,
                      with_timer = timeout > 0,
                      all_equal_button_style = sprintf("margin-top:10px;%s", button_style),
                      ...))
-  get_answer <- function(input, ...) {
+  get_answer <- function(state, input, ...) {
+    item_number <- psychTestR::get_local(key = "item_number", state = state)
+    psychTestR::set_local(key = "item_number", value = item_number + 1L , state = state)
+    messagef("Set item number: %d", item_number + 1L)
     answer <- input$last_btn_pressed
     if(is.null(answer)){
       answer <- NA

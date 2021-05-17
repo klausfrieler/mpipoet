@@ -5,14 +5,14 @@
 \title{SRS}
 \usage{
 SRS(
-  num_items = 32L,
+  num_items = 36L,
   with_welcome = TRUE,
   with_training = TRUE,
   with_finish = TRUE,
   with_feedback = FALSE,
   label = "SRS",
   dict = mpipoet::mpipoet_dict,
-  timeout = 30,
+  timeout = 10,
   ...
 )
 }

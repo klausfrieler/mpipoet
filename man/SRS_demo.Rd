@@ -6,7 +6,7 @@
 \usage{
 SRS_demo(
   num_items = 3L,
-  timeout = 30,
+  timeout = 10,
   title = "SRS Demo",
   dict = mpipoet::mpipoet_dict,
   admin_password = "demo",
