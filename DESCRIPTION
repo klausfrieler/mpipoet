@@ -1,5 +1,5 @@
 Package: mpipoet
-Title: Collection of tests and questionnaires for empirical poetry research.
+Title: Collection of tests and questionnaires for empirical poetry research
 Version: 1.3.0
 Authors@R: c(
   person("Klaus", "Frieler", email = "kf@omniversum.de", role = c("aut","cre")),

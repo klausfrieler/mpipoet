@@ -22,7 +22,7 @@ make_correct_buttons <- function(){
 
   button_labels <- c(practice_items %>%
                        dplyr::slice(2) %>%
-                       dplyr::select(starts_with("item")) %>%
+                       dplyr::select(tidyselect::starts_with("item")) %>%
                        as.vector())
   buttons <- mapply(function(id, label) {
     shiny::actionButton(inputId = id, label = label, disabled = TRUE)},
@@ -51,7 +51,7 @@ make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
   if(page_type != "correct"){
     button_labels <- c(practice_items %>%
                          dplyr::slice(1) %>%
-                         dplyr::select(starts_with("item")) %>%
+                         dplyr::select(tidyselect::starts_with("item")) %>%
                          as.vector(),
                        psychTestR::i18n("SRS_ALL_EQUAL"))
 

@@ -82,7 +82,7 @@ join_dicts <- function(dict1, dict2 = NULL, keys1 = NULL, keys2 = NULL){
     if(length(common_names) == 1){
       stop("Incompatible dictionaries")
     }
-    dict1 <- bind_rows(dict1[,common_names], tmp[,common_names]) %>% distinct(key, .keep_all = T)
+    dict1 <- dplyr::bind_rows(dict1[,common_names], tmp[,common_names]) %>% dplyr::distinct(key, .keep_all = T)
   }
   dict1 %>% psychTestR::i18n_dict$new()
 }

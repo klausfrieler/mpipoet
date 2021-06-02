@@ -11,3 +11,11 @@ NULL
 #' @name SRS_item_bank
 #' @docType data
 NULL
+
+
+#' ART item bank
+#'
+#' The ART item bank
+#' @name ART_item_bank
+#' @docType data
+NULL
