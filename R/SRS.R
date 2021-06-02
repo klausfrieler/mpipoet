@@ -8,9 +8,9 @@ SRS_item_page <- function(item_number, item_id, num_items_in_test, item_bank, di
                                                sub = list(num_question = item_number,
                                                           test_length = num_items_in_test))),
                     if(item_id == 1)shiny::tags$script("var myTimer = false;"),
-                    shiny::p(psychTestR::i18n("PROMPT", sub = list(time_out = as.character(timeout))))),
+                    shiny::p(psychTestR::i18n("SRS_PROMPT", sub = list(time_out = as.character(timeout))))),
                   choices = as.character(1:5),
-                  labels = c(item %>% dplyr::select(starts_with("item"))  %>% as.data.frame() %>% as.vector(), psychTestR::i18n("ALL_EQUAL")),
+                  labels = c(item %>% dplyr::select(starts_with("item"))  %>% as.data.frame() %>% as.vector(), psychTestR::i18n("SRS_ALL_EQUAL")),
                   save_answer = T,
                   on_complete = on_complete
                 )
@@ -45,7 +45,7 @@ make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
         practice_state <- "too_slow"
       }
     }
-    messagef("on_practice_complete: %s", practice_state)
+    #messagef("on_practice_complete: %s", practice_state)
     psychTestR::set_local("practice_state", practice_state, state)
   }
   if(page_type != "correct"){
@@ -53,19 +53,19 @@ make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
                          dplyr::slice(1) %>%
                          dplyr::select(starts_with("item")) %>%
                          as.vector(),
-                       psychTestR::i18n("ALL_EQUAL"))
+                       psychTestR::i18n("SRS_ALL_EQUAL"))
 
     if(page_type == "first"){
       prompt <- shiny::div(
         shiny::tags$script("var myTimer = false;"),
-        shiny::h4(psychTestR::i18n("EXAMPLE")),
-        shiny::p(psychTestR::i18n("EXAMPLE_PROMPT")),
-        shiny::p(psychTestR::i18n("PROMPT", sub = list(time_out = as.character(timeout)))))
+        shiny::h4(psychTestR::i18n("SRS_EXAMPLE")),
+        shiny::p(psychTestR::i18n("SRS_EXAMPLE_PROMPT")),
+        shiny::p(psychTestR::i18n("SRS_PROMPT", sub = list(time_out = as.character(timeout)))))
 
     }
     else if(page_type == "incorrect"){
       prompt <- shiny::div(
-        shiny::p(psychTestR::i18n("EXAMPLE_FEEDBACK_INCORRECT")))
+        shiny::p(psychTestR::i18n("SRS_EXAMPLE_FEEDBACK_INCORRECT")))
     }
     else if(page_type == "too_slow"){
       prompt <- shiny::div(
@@ -86,8 +86,8 @@ make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
       psychTestR::join(
         psychTestR::one_button_page(body = shiny::div(
           shiny::tags$script("can_advance = false;"),
-          shiny::h4(psychTestR::i18n("EXAMPLE")),
-          shiny::p(psychTestR::i18n("EXAMPLE_FEEDBACK_CORRECT")),
+          shiny::h4(psychTestR::i18n("SRS_EXAMPLE")),
+          shiny::p(psychTestR::i18n("SRS_EXAMPLE_FEEDBACK_CORRECT")),
           shiny::p(make_correct_buttons())),
           on_complete = on_complete,
           button_text = psychTestR::i18n("CONTINUE"))
@@ -153,8 +153,8 @@ SRS_welcome_page <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
     psychTestR::one_button_page(
       body = shiny::div(
-        shiny::h4(psychTestR::i18n("WELCOME")),
-        shiny::div(psychTestR::i18n("INSTRUCTIONS"),
+        shiny::h4(psychTestR::i18n("SRS_WELCOME")),
+        shiny::div(psychTestR::i18n("SRS_INSTRUCTIONS"),
                    style = "margin-left:0%;width:50%;min-width:400px;text-align:justify;margin-bottom:30px")
       ),
       button_text = psychTestR::i18n("CONTINUE")

@@ -28,6 +28,9 @@ NULL
 #' @importFrom dplyr "left_join"
 NULL
 
+#' @importFrom dplyr "sample_n"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 

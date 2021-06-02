@@ -121,9 +121,10 @@ make_ui_month_and_year_select <-
     shiny::tags$div(id = "rb", style = "width: 300px", selectboxes, psychTestR::trigger_button("next", psychTestR::i18n("CONTINUE")))
   }
 
-make_SRS_ui_NAFC <- function(choices, labels = NULL,
+make_ui_NAFC_with_timeout <- function(choices, labels = NULL,
                              id = "response_ui", timeout = 30,
                              button_style = "",
+                             has_all_equal = T,
                              all_equal_button_style ="",
                              with_timer = TRUE,
                              ...) {
@@ -136,9 +137,10 @@ make_SRS_ui_NAFC <- function(choices, labels = NULL,
     psychTestR::trigger_button(inputId = id, label = label, style = button_style, ...)
   }, choices, labels, SIMPLIFY = F, USE.NAMES = F)
 
-  buttons[[length(labels)]] <- shiny::p(buttons[[length(labels)]],
+  if(has_all_equal){#
+    buttons[[length(labels)]] <- shiny::p(buttons[[length(labels)]],
                                         style = all_equal_button_style)
-
+  }
   timer_script <- sprintf("can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer');", timeout * 1000)
 
   shiny::tags$div(id = id, buttons,
@@ -154,18 +156,20 @@ SRS_NAFC_page <- function(label, prompt, choices, labels = NULL,
                           on_complete = NULL,
                           admin_ui = NULL,
                           timeout = 30,
+                          has_all_equal = TRUE,
                           button_style = "",
                           ...) {
   stopifnot(is.scalar.character(label), is.character(choices), length(choices) > 0L)
   ui <- shiny::div(
     tagify(prompt),
-    make_SRS_ui_NAFC(choices,
-                     labels = labels,
-                     id = response_ui_id,
-                     timeout = timeout,
-                     button_style = button_style,
-                     with_timer = timeout > 0,
-                     all_equal_button_style = sprintf("margin-top:10px;%s", button_style),
+    make_ui_NAFC_with_timeout(choices,
+                              labels = labels,
+                              id = response_ui_id,
+                              timeout = timeout,
+                              button_style = button_style,
+                              has_all_equal = has_all_equal,
+                              with_timer = timeout > 0,
+                              all_equal_button_style = sprintf("margin-top:10px;%s", button_style),
                      ...))
   get_answer <- function(state, input, ...) {
     item_number <- psychTestR::get_local(key = "item_number", state = state)
