@@ -50,6 +50,16 @@ ART_welcome_page <- function(dict = mpipoet::mpipoet_dict){
       button_text = psychTestR::i18n("CONTINUE")
     ), dict = dict)
 }
+ART_clear_page <- function(dict = mpipoet::mpipoet_dict){
+  psychTestR::new_timeline(
+    psychTestR::one_button_page(
+      body = shiny::div(
+        shiny::h4(psychTestR::i18n("YOU_FINISHED", sub = list(test_name = psychTestR::i18n("ART_TESTNAME")))),
+        shiny::tags$script("can_advance = false;if(myTimer)window.clearTimeout(myTimer);console.log('ART: Cleared timeout');")
+      ),
+      button_text = psychTestR::i18n("CONTINUE")
+    ), dict = dict)
+}
 
 ART_final_page <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
@@ -58,7 +68,7 @@ ART_final_page <- function(dict = mpipoet::mpipoet_dict){
         shiny::h4(psychTestR::i18n("THANK_YOU")),
         shiny::div(psychTestR::i18n("CLOSE_BROWSER"),
                    style = "margin-left:0%;display:block"),
-        shiny::tags$script("can_advance = false;console.log('Cleared timeout');")
+        shiny::tags$script("can_advance = false;if(myTimer)window.clearTimeout(myTimer);console.log('ART: Cleared timeout');")
       )
     ), dict = dict)
 }
@@ -68,7 +78,7 @@ ART_feedback_with_score <- function(dict = mpipoet::mpipoet_dict){
     psychTestR::reactive_page(function(state,...){
       results <- psychTestR::get_results(state = state, complete = TRUE, add_session_info = F) %>% as.data.frame()
       text <- shiny::div(
-        shiny::tags$script("can_advance = false;"),
+        shiny::tags$script("can_advance = false;if(myTimer)window.clearTimeout(myTimer);console.log('ART: Cleared timeout');"),
         shiny::p(psychTestR::i18n("ART_FEEDBACK",
                                   sub = list(num_correct = results$ART.num_correct,
                                              num_items = results$ART.num_items,
@@ -120,6 +130,8 @@ ART <- function(num_items = NULL,
     #   browser()
     # }),
     if(with_finish) ART_final_page(),
+    if(!with_finish && !with_feedback) ART_clear_page(),
+
     psychTestR::end_module())
 
 }
