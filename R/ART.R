@@ -1,21 +1,56 @@
+get_ART_item_sequence <- function(num_items = NULL, seed = NULL, type = "pairs"){
+  #browser()
+  stopifnot(type %in% c("pairs", "single"))
+  item_bank <- mpipoet::ART_item_bank
+  writer_items <- item_bank  %>% filter(role != "foil")
+  non_writer_items <- item_bank  %>% filter(role == "foil")
 
-ART_item_page <- function(item_number, item, num_items_in_test, dict = mpipoet::mpipoet_dict, timeout = 30, on_complete = NULL){
+  max_items <- min(writer_items %>% nrow(), non_writer_items %>% nrow())
+  if(is.null(num_items) || num_items > max_items){
+    num_items <- max_items
+  }
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
+  if(type == "single"){
+    return(item_bank %>% sample_n(num_items) %>% mutate(order = sample(1:2, num_items, replace = T)))
+  }
+  writer_items <- writer_items %>% sample_n(num_items)
+  non_writer_items <- non_writer_items %>% sample_n(num_items)
+  tibble(writer_items = writer_items$name, non_writer_items = non_writer_items$name, order = sample(1:2, num_items, replace = T))
+}
+
+
+ART_item_page <- function(item_number, item, num_items_in_test, type = "pairs", dict = mpipoet::mpipoet_dict, timeout = 30, on_complete = NULL){
   #browser()
   item <- as.data.frame(item)
   stopifnot(nrow(item) == 1)
-  choices <- c("1", "0")
-  labels <- c(item$writer_item, item$non_writer_item)
-  if(item$order == 2){
-    choices <- choices[c(2,1)]
-    labels <- labels[c(2,1)]
+
+  if(type == "pairs"){
+    prompt_id <- "ART_PROMPT"
+    choices <- c("1", "0")
+    labels <- c(item$writer_item, item$non_writer_item)
+    name <- ""
+  } else{
+    prompt_id <- "ART_PROMPT_SINGLE"
+    choices <- as.character(as.integer(c(item$role != "foil", item$role == "foil")))
+    labels <- c(psychTestR::i18n("ART_YES"), psychTestR::i18n("ART_NO"))
+    #browser()
+    name <- item$name
   }
+
+  if(item$order == 2 && type == "pairs"){
+      choices <- choices[c(2,1)]
+      labels <- labels[c(2,1)]
+  }
+  #browser()
   SRS_NAFC_page(label = sprintf("q%s", item_number),
                 prompt = shiny::div(
                   shiny::h4(psychTestR::i18n("PAGE_HEADER",
                                              sub = list(num_question = item_number,
                                                         test_length = num_items_in_test))),
                   if(item_number == 1)shiny::tags$script("var myTimer = false;"),
-                  shiny::p(psychTestR::i18n("ART_PROMPT", sub = list(time_out = as.character(timeout))))),
+                  shiny::p(psychTestR::i18n(prompt_id, sub = list(name = name, time_out = as.character(timeout)))), style = "margin:10px"),
                 choices = choices,
                 labels = labels,
                 has_all_equal = F,
@@ -25,16 +60,51 @@ ART_item_page <- function(item_number, item, num_items_in_test, dict = mpipoet::
   #, dict = dict)
 }
 
+ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank), dict = mpipoet::mpipoet_dict, timeout = 60,
+                           on_complete = NULL){
+  #browser()
+  num_items <- min(num_items, nrow(mpipoet::ART_item_bank))
+  items <- mpipoet::ART_item_bank %>% sample_n(num_items)
+  choices <- items %>% pull(role)
+  labels <- items %>% pull(name)
+  timer_script <- sprintf("var myTimer = true;can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer');", timeout * 1000)
 
-ART_scoring <- function(){
+  psychTestR::checkbox_page(
+    label = "q0",
+    prompt = shiny::div(
+      shiny::tags$script(timer_script),
+      shiny::p(psychTestR::i18n("ART_PROMPT_SINGLE_PAGE", sub = list(time_out = as.character(timeout))))),
+    choices = choices,
+    labels = labels,
+    trigger_button_text = psychTestR::i18n("CONTINUE"),
+    save_answer = T,
+    on_complete = on_complete
+  )
+  #, dict = dict)
+}
+
+ART_scoring <- function(type = "pairs"){
   psychTestR::code_block(function(state, ...) {
     results <- psychTestR::get_results(state = state, complete = FALSE)
-    correct <- results[[1]] %>% unlist()
-    correct[correct == "next" | is.na(correct)] <- "0"
-    correct <- as.integer(correct)
+    browser()
+    if(type %in% c("pairs", "single")){
+      correct <- results[[1]] %>% unlist()
+      correct[correct == "next" | is.na(correct)] <- "0"
+      correct <- as.integer(correct)
+      points <- correct
+    } else{
+      res <- results[[1]]$q0
+      num_writers = nrow(mpipoet::ART_item_bank %>% filter(role != "foil"))
+      correct <- sum(res != "foil" & res != "")
+      incorrect <- sum(res == "foil")
+      points <- correct - 2*incorrect
+      correct <- c(rep(TRUE, correct), rep(FALSE, num_writers - correct))
+    }
+
     psychTestR::save_result(state, label = "perc_correct", value = mean(correct, na.rm = T))
     psychTestR::save_result(state, label = "num_items", value = length(correct))
     psychTestR::save_result(state, label = "num_correct", value = sum(correct, na.rm = T))
+    psychTestR::save_result(state, label = "points", value = points)
   })
 
 }
@@ -50,6 +120,7 @@ ART_welcome_page <- function(dict = mpipoet::mpipoet_dict){
       button_text = psychTestR::i18n("CONTINUE")
     ), dict = dict)
 }
+
 ART_clear_page <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
     psychTestR::one_button_page(
@@ -73,15 +144,21 @@ ART_final_page <- function(dict = mpipoet::mpipoet_dict){
     ), dict = dict)
 }
 
-ART_feedback_with_score <- function(dict = mpipoet::mpipoet_dict){
+ART_feedback_with_score <- function(dict = mpipoet::mpipoet_dict, type ="pairs"){
+  feedback_macro <- "ART_FEEDBACK"
+  if(type == "single_page"){
+    feedback_macro <- "ART_FEEDBACK_SINGLE_PAGE"
+
+  }
   psychTestR::new_timeline(
     psychTestR::reactive_page(function(state,...){
       results <- psychTestR::get_results(state = state, complete = TRUE, add_session_info = F) %>% as.data.frame()
       text <- shiny::div(
         shiny::tags$script("can_advance = false;if(myTimer)window.clearTimeout(myTimer);console.log('ART: Cleared timeout');"),
-        shiny::p(psychTestR::i18n("ART_FEEDBACK",
+        shiny::p(psychTestR::i18n(feedback_macro,
                                   sub = list(num_correct = results$ART.num_correct,
                                              num_items = results$ART.num_items,
+                                             points = results$ART.points,
                                              perc_correct = round(100 * results$ART.perc_correct, 1)))))
       psychTestR::one_button_page(body = text,
                                   button_text = psychTestR::i18n("CONTINUE"))
@@ -114,16 +191,25 @@ ART <- function(num_items = NULL,
                 with_finish = TRUE,
                 with_feedback = FALSE,
                 label = "ART",
+                type = "pairs",
                 dict = mpipoet::mpipoet_dict,
                 timeout = 10,
                 ...){
+  if(type %in% c("single", "pairs")){
+    main <-  psychTestR::new_timeline(
+      ART_main_test(num_items = num_items, type = type, timeout = timeout),
+      dict = dict)
+  } else {
+    main <- psychTestR::new_timeline(
+      ART_main_test2(num_items = num_items, timeout = timeout),
+      dict = dict)
+
+  }
   psychTestR::join(
     psychTestR::begin_module(label),
     if (with_welcome) ART_welcome_page(),
-    psychTestR::new_timeline(
-      ART_main_test(num_items = num_items),
-      dict = dict),
-    if(with_feedback) ART_feedback_with_score(dict = dict),
+    main,
+    if(with_feedback) ART_feedback_with_score(dict = dict, type = type),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
     # psychTestR::code_block(function(state, ...){
     #   results <- psychTestR::get_results(state, complete = F)
@@ -136,29 +222,11 @@ ART <- function(num_items = NULL,
 
 }
 
-get_ART_item_sequence <- function(num_items = NULL, seed = NULL){
-  #browser()
-  item_bank <- mpipoet::ART_item_bank
-  writer_items <- item_bank  %>% filter(role != "other")
-  non_writer_items <- item_bank  %>% filter(role == "other")
-
-  max_items <- min(writer_items %>% nrow(), non_writer_items %>% nrow())
-  if(is.null(num_items) || num_items > max_items){
-    num_items <- max_items
-  }
-  if(!is.null(seed)){
-    set.seed(seed)
-  }
-  writer_items <- writer_items %>% sample_n(num_items)
-  non_writer_items <- non_writer_items %>% sample_n(num_items)
-  tibble(writer_items = writer_items$name, non_writer_items = non_writer_items$name, order = sample(1:2, num_items, replace = T))
-}
-
-ART_main_test <- function(num_items = NULL, timeout = 10){
+ART_main_test <- function(num_items = NULL, type = "pairs", timeout = 10){
 
   #item_bank <- mpipoet::ART_item_bank %>% filter(type == "test")
   if(is.null(num_items)){
-    num_items <- mpipoet::ART_item_bank %>% dplyr::count(role != "other") %>% filter(n == min(n)) %>% pull(n)
+    num_items <- mpipoet::ART_item_bank %>% dplyr::count(role != "foil") %>% filter(n == min(n)) %>% pull(n)
   }
   elts <- psychTestR::code_block(function(state, ...){
     #browser()
@@ -168,7 +236,7 @@ ART_main_test <- function(num_items = NULL, timeout = 10){
       as.integer() %>%
       sum()
     messagef("Code block, seed %d", seed)
-    item_sequence <- get_ART_item_sequence(num_items, seed)
+    item_sequence <- get_ART_item_sequence(num_items, seed, type = type)
     print(item_sequence)
     psychTestR::set_local(key = "item_sequence", value = item_sequence, state = state)
     psychTestR::set_local(key = "item_number", value = 1L, state = state)
@@ -184,7 +252,7 @@ ART_main_test <- function(num_items = NULL, timeout = 10){
       item_number <- psychTestR::get_local("item_number", state)
       item <- item_sequence[item_number,]
       messagef("Called reactive page, item_number %d", item_number)
-      ART_item_page(item_number, item, num_items, dict = dict, timeout = timeout)
+      ART_item_page(item_number, item, num_items, dict = dict, timeout = timeout, type = type)
     })
     elts <- c(elts,item)
   }
@@ -192,11 +260,20 @@ ART_main_test <- function(num_items = NULL, timeout = 10){
   #elts <- map(1:num_items, ~{ART_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
   elts <- psychTestR::join(
     elts,
-    ART_scoring()
+    ART_scoring(type = type)
   )
   elts
 }
 
+ART_main_test2 <- function(num_items = NULL, timeout = 60){
+  #elts <- map(1:num_items, ~{ART_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
+  num_items <- nrow(mpipoet::ART_item_bank)
+  elts <- psychTestR::join(
+    ART_item_page2(num_items, dict = dict, timeout = timeout),
+    ART_scoring(type = "single_page")
+  )
+  elts
+}
 #' Demo ART
 #'
 #' This function launches a demo for the ART
@@ -219,7 +296,8 @@ ART_main_test <- function(num_items = NULL, timeout = 10){
 #' @export
 #'
 ART_demo <- function(num_items = 3L,
-                     timeout = 10,
+                     type = "pairs",
+                     timeout = ifelse(type == "pairs", 10, 120),
                      title = "ART Demo",
                      dict = mpipoet::mpipoet_dict,
                      admin_password = "demo",
@@ -227,7 +305,7 @@ ART_demo <- function(num_items = 3L,
                      language = c("en", "de")){
   elts <- psychTestR::join(
     ART_welcome_page(dict = dict),
-    ART(num_items = num_items, with_welcome = F, with_feedback = T,  with_finish =  F, timeout = timeout),
+    ART(num_items = num_items, type = type, with_welcome = F, with_feedback = T,  with_finish =  F, timeout = timeout),
     ART_final_page(dict = dict)
   )
 
@@ -271,7 +349,8 @@ ART_demo <- function(num_items = 3L,
 #'
 ART_standalone  <- function(title = NULL,
                             num_items = NULL,
-                            timeout = 10,
+                            type = "pairs",
+                            timeout = ifelse(type == "pairs", 10, 120),
                             with_id = FALSE,
                             with_welcome = TRUE,
                             with_feedback = TRUE,
@@ -294,6 +373,7 @@ ART_standalone  <- function(title = NULL,
       with_finish = FALSE,
       with_feedback = with_feedback,
       dict = dict,
+      type  = type,
       timeout = timeout,
       ...),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
