@@ -67,11 +67,11 @@ ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank),
   #browser()
   num_items <- max(3, min(num_items, nrow(mpipoet::ART_item_bank)))
   num_writers <- 0
-  while(num_writers/num_items < .64 || num_writers/num_items > .84 ){
+  while(num_writers/num_items < .60 || num_writers/num_items > .84 ){
     items <- mpipoet::ART_item_bank %>% sample_n(num_items)
     num_writers <- nrow(items %>% filter(role != "foil"))
     num_foils <- nrow(items %>% filter(role == "foil"))
-    messagef("Found %d/%d writers/foils for %d items", num_writers, num_foils, num_items)
+    messagef("Found %d/%d writers/foils %.2f) for %d items", num_writers, num_foils, num_writers/num_foils, num_items)
   }
   labels <- items %>% pull(name)
   choices <- sprintf("%s:%s", items %>% pull(role), labels)
