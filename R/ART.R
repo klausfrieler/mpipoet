@@ -71,7 +71,7 @@ ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank),
     items <- mpipoet::ART_item_bank %>% sample_n(num_items)
     num_writers <- nrow(items %>% filter(role != "foil"))
     num_foils <- nrow(items %>% filter(role == "foil"))
-    messagef("Found %d/%d writers/foils %.2f) for %d items", num_writers, num_foils, num_writers/num_foils, num_items)
+    messagef("Found %d/%d writers/foils %.2f) for %d items", num_writers, num_foils, num_writers/num_items, num_items)
   }
   labels <- items %>% pull(name)
   choices <- sprintf("%s:%s", items %>% pull(role), labels)
@@ -101,7 +101,7 @@ ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank),
 ART_scoring <- function(mode = "pairs"){
   psychTestR::code_block(function(state, ...) {
     results <- psychTestR::get_results(state = state, complete = FALSE)
-    #browser()
+    browser()
     if(mode %in% c("pairs", "single")){
       correct <- results[[1]] %>% unlist()
       correct[correct == "next" | is.na(correct)] <- "0"
@@ -124,7 +124,7 @@ ART_scoring <- function(mode = "pairs"){
     } else{
       res <- results[[1]]$q0
       num_writers = results[[1]]$num_writers
-      res <- purrr::map_chr(str_split(res, ":"), ~{.x[1]})
+      res <- purrr::map_chr(stringr::str_split(res, ":"), ~{.x[1]})
       correct <- sum(res != "foil" & res != "")
       incorrect <- sum(res == "foil")
       points <- correct - 2*incorrect
