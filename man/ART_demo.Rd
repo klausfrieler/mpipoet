@@ -6,7 +6,8 @@
 \usage{
 ART_demo(
   num_items = 3L,
-  timeout = 10,
+  mode = "pairs",
+  timeout = ifelse(mode == "pairs", 10, 120),
   title = "ART Demo",
   dict = mpipoet::mpipoet_dict,
   admin_password = "demo",
@@ -16,6 +17,8 @@ ART_demo(
 }
 \arguments{
 \item{num_items}{(Integer scalar) Number of items in the test. Default NULL pulls all items.}
+
+\item{mode}{(String scalar) Presentation mode of the ART, 'single', 'pairs' or 'single_page'. Default is 'pairs'.}
 
 \item{timeout}{(Double scalar) The time to answer (in seconds)}
 

@@ -6,6 +6,7 @@
 \usage{
 ART(
   num_items = NULL,
+  mode = "pairs",
   with_welcome = TRUE,
   with_finish = TRUE,
   with_feedback = FALSE,
@@ -17,6 +18,8 @@ ART(
 }
 \arguments{
 \item{num_items}{(Integer scalar) Number of items in the test. Default NULL pulls all items.}
+
+\item{mode}{(String scalar) Presentation mode of the ART, 'single', 'pairs' or 'single_page'. Default is 'pairs'.}
 
 \item{with_welcome}{(Logical scalar) Whether to show a welcome page.}
 

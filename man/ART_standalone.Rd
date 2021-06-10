@@ -7,7 +7,8 @@
 ART_standalone(
   title = NULL,
   num_items = NULL,
-  timeout = 10,
+  mode = "pairs",
+  timeout = ifelse(mode == "pairs", 10, 120),
   with_id = FALSE,
   with_welcome = TRUE,
   with_feedback = TRUE,
@@ -23,6 +24,8 @@ ART_standalone(
 \item{title}{(Scalar character) Title to display during testing.}
 
 \item{num_items}{(Scalar integer) Number of items to be adminstered. Default NULL pulls all items.}
+
+\item{mode}{(String scalar) Presentation mode of the ART, 'single', 'pairs' or 'single_page'. Default is 'pairs'.}
 
 \item{timeout}{(Double scalar) The time to answer (in seconds)}
 

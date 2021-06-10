@@ -1,6 +1,6 @@
-get_ART_item_sequence <- function(num_items = NULL, seed = NULL, type = "pairs"){
+get_ART_item_sequence <- function(num_items = NULL, seed = NULL, mode = "pairs"){
   #browser()
-  stopifnot(type %in% c("pairs", "single"))
+  stopifnot(mode %in% c("pairs", "single"))
   item_bank <- mpipoet::ART_item_bank
   writer_items <- item_bank  %>% filter(role != "foil")
   non_writer_items <- item_bank  %>% filter(role == "foil")
@@ -12,7 +12,7 @@ get_ART_item_sequence <- function(num_items = NULL, seed = NULL, type = "pairs")
   if(!is.null(seed)){
     set.seed(seed)
   }
-  if(type == "single"){
+  if(mode == "single"){
     return(item_bank %>% sample_n(num_items) %>% mutate(order = sample(1:2, num_items, replace = T)))
   }
   writer_items <- writer_items %>% sample_n(num_items)
@@ -21,13 +21,13 @@ get_ART_item_sequence <- function(num_items = NULL, seed = NULL, type = "pairs")
 }
 
 
-ART_item_page <- function(item_number, item, num_items_in_test, type = "pairs", dict = mpipoet::mpipoet_dict, timeout = 30, on_complete = NULL){
+ART_item_page <- function(item_number, item, num_items_in_test, mode = "pairs", dict = mpipoet::mpipoet_dict, timeout = 30, on_complete = NULL){
   #browser()
   item <- as.data.frame(item)
   stopifnot(nrow(item) == 1)
 
-  if(type == "pairs"){
-    prompt_id <- "ART_PROMPT"
+  if(mode == "pairs"){
+    prompt_id <- "ART_PROMPT_PAIRS"
     choices <- c("1", "0")
     labels <- c(item$writer_item, item$non_writer_item)
     name <- ""
@@ -39,7 +39,7 @@ ART_item_page <- function(item_number, item, num_items_in_test, type = "pairs", 
     name <- item$name
   }
 
-  if(item$order == 2 && type == "pairs"){
+  if(item$order == 2 && mode == "pairs"){
       choices <- choices[c(2,1)]
       labels <- labels[c(2,1)]
   }
@@ -83,11 +83,11 @@ ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank), dict = mpip
   #, dict = dict)
 }
 
-ART_scoring <- function(type = "pairs"){
+ART_scoring <- function(mode = "pairs"){
   psychTestR::code_block(function(state, ...) {
     results <- psychTestR::get_results(state = state, complete = FALSE)
-    browser()
-    if(type %in% c("pairs", "single")){
+    #browser()
+    if(mode %in% c("pairs", "single")){
       correct <- results[[1]] %>% unlist()
       correct[correct == "next" | is.na(correct)] <- "0"
       correct <- as.integer(correct)
@@ -109,12 +109,14 @@ ART_scoring <- function(type = "pairs"){
 
 }
 
-ART_welcome_page <- function(dict = mpipoet::mpipoet_dict){
+ART_welcome_page <- function(dict = mpipoet::mpipoet_dict, mode = "pairs"){
+  instructions_id <- sprintf("ART_INSTRUCTIONS_%s", toupper(mode))
+  print(instructions_id)
   psychTestR::new_timeline(
     psychTestR::one_button_page(
       body = shiny::div(
         shiny::h4(psychTestR::i18n("ART_WELCOME")),
-        shiny::div(psychTestR::i18n("ART_INSTRUCTIONS"),
+        shiny::div(psychTestR::i18n(instructions_id),
                    style = "margin-left:0%;width:50%;min-width:400px;text-align:justify;margin-bottom:30px")
       ),
       button_text = psychTestR::i18n("CONTINUE")
@@ -144,9 +146,9 @@ ART_final_page <- function(dict = mpipoet::mpipoet_dict){
     ), dict = dict)
 }
 
-ART_feedback_with_score <- function(dict = mpipoet::mpipoet_dict, type ="pairs"){
+ART_feedback_with_score <- function(dict = mpipoet::mpipoet_dict, mode = "pairs"){
   feedback_macro <- "ART_FEEDBACK"
-  if(type == "single_page"){
+  if(mode == "single_page"){
     feedback_macro <- "ART_FEEDBACK_SINGLE_PAGE"
 
   }
@@ -177,6 +179,7 @@ ART_feedback_with_score <- function(dict = mpipoet::mpipoet_dict, type ="pairs")
 #' For a standalone implementation of the ART,
 #' consider using \code{\link{ART_standalone}()}.
 #' @param num_items (Integer scalar) Number of items in the test. Default NULL pulls all items.
+#' @param mode (String scalar) Presentation mode of the ART, 'single', 'pairs' or 'single_page'. Default is 'pairs'.
 #' @param with_welcome (Logical scalar) Whether to show a welcome page.
 #' @param with_finish (Logical scalar) Whether to show a finished page.
 #' @param with_feedback (Logical scalar) Whether to include feedback to the participants.
@@ -187,29 +190,29 @@ ART_feedback_with_score <- function(dict = mpipoet::mpipoet_dict, type ="pairs")
 #' @export
 #'
 ART <- function(num_items = NULL,
+                mode = "pairs",
                 with_welcome = TRUE,
                 with_finish = TRUE,
                 with_feedback = FALSE,
                 label = "ART",
-                type = "pairs",
                 dict = mpipoet::mpipoet_dict,
                 timeout = 10,
                 ...){
-  if(type %in% c("single", "pairs")){
+  if(mode %in% c("single", "pairs")){
     main <-  psychTestR::new_timeline(
-      ART_main_test(num_items = num_items, type = type, timeout = timeout),
+      ART_main_test(num_items = num_items, mode = mode, timeout = timeout),
       dict = dict)
   } else {
     main <- psychTestR::new_timeline(
-      ART_main_test2(num_items = num_items, timeout = timeout),
+      ART_main_test.single_page(num_items = num_items, timeout = timeout),
       dict = dict)
 
   }
   psychTestR::join(
     psychTestR::begin_module(label),
-    if (with_welcome) ART_welcome_page(),
+    if (with_welcome) ART_welcome_page(mode = mode),
     main,
-    if(with_feedback) ART_feedback_with_score(dict = dict, type = type),
+    if(with_feedback) ART_feedback_with_score(dict = dict, mode = mode),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
     # psychTestR::code_block(function(state, ...){
     #   results <- psychTestR::get_results(state, complete = F)
@@ -222,9 +225,9 @@ ART <- function(num_items = NULL,
 
 }
 
-ART_main_test <- function(num_items = NULL, type = "pairs", timeout = 10){
+ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10){
 
-  #item_bank <- mpipoet::ART_item_bank %>% filter(type == "test")
+  #item_bank <- mpipoet::ART_item_bank %>% filter(mode == "test")
   if(is.null(num_items)){
     num_items <- mpipoet::ART_item_bank %>% dplyr::count(role != "foil") %>% filter(n == min(n)) %>% pull(n)
   }
@@ -236,7 +239,7 @@ ART_main_test <- function(num_items = NULL, type = "pairs", timeout = 10){
       as.integer() %>%
       sum()
     messagef("Code block, seed %d", seed)
-    item_sequence <- get_ART_item_sequence(num_items, seed, type = type)
+    item_sequence <- get_ART_item_sequence(num_items, seed, mode = mode)
     print(item_sequence)
     psychTestR::set_local(key = "item_sequence", value = item_sequence, state = state)
     psychTestR::set_local(key = "item_number", value = 1L, state = state)
@@ -252,7 +255,7 @@ ART_main_test <- function(num_items = NULL, type = "pairs", timeout = 10){
       item_number <- psychTestR::get_local("item_number", state)
       item <- item_sequence[item_number,]
       messagef("Called reactive page, item_number %d", item_number)
-      ART_item_page(item_number, item, num_items, dict = dict, timeout = timeout, type = type)
+      ART_item_page(item_number, item, num_items, dict = dict, timeout = timeout, mode = mode)
     })
     elts <- c(elts,item)
   }
@@ -260,17 +263,17 @@ ART_main_test <- function(num_items = NULL, type = "pairs", timeout = 10){
   #elts <- map(1:num_items, ~{ART_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
   elts <- psychTestR::join(
     elts,
-    ART_scoring(type = type)
+    ART_scoring(mode = mode)
   )
   elts
 }
 
-ART_main_test2 <- function(num_items = NULL, timeout = 60){
+ART_main_test.single_page <- function(num_items = NULL, timeout = 60){
   #elts <- map(1:num_items, ~{ART_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
   num_items <- nrow(mpipoet::ART_item_bank)
   elts <- psychTestR::join(
     ART_item_page2(num_items, dict = dict, timeout = timeout),
-    ART_scoring(type = "single_page")
+    ART_scoring(mode = "single_page")
   )
   elts
 }
@@ -279,6 +282,7 @@ ART_main_test2 <- function(num_items = NULL, timeout = 60){
 #' This function launches a demo for the ART
 #'
 #' @param num_items (Integer scalar) Number of items in the test. Default NULL pulls all items.
+#' @param mode (String scalar) Presentation mode of the ART, 'single', 'pairs' or 'single_page'. Default is 'pairs'.
 #' @param timeout (Double scalar) The time to answer (in seconds)
 #' @param title (Character scalar) The title
 #' @param admin_password (Scalar character) Password for accessing the admin panel.
@@ -296,16 +300,16 @@ ART_main_test2 <- function(num_items = NULL, timeout = 60){
 #' @export
 #'
 ART_demo <- function(num_items = 3L,
-                     type = "pairs",
-                     timeout = ifelse(type == "pairs", 10, 120),
+                     mode = "pairs",
+                     timeout = ifelse(mode == "pairs", 10, 120),
                      title = "ART Demo",
                      dict = mpipoet::mpipoet_dict,
                      admin_password = "demo",
                      researcher_email = "klaus.frieler@ae.mpg.de",
                      language = c("en", "de")){
   elts <- psychTestR::join(
-    ART_welcome_page(dict = dict),
-    ART(num_items = num_items, type = type, with_welcome = F, with_feedback = T,  with_finish =  F, timeout = timeout),
+    ART_welcome_page(dict = dict, mode = mode),
+    ART(num_items = num_items, mode = mode, with_welcome = F, with_feedback = T,  with_finish =  F, timeout = timeout),
     ART_final_page(dict = dict)
   )
 
@@ -328,6 +332,7 @@ ART_demo <- function(num_items = 3L,
 #' This can be used for data collection, either in the laboratory or online.
 #' @param title (Scalar character) Title to display during testing.
 #' @param num_items (Scalar integer) Number of items to be adminstered. Default NULL pulls all items.
+#' @param mode (String scalar) Presentation mode of the ART, 'single', 'pairs' or 'single_page'. Default is 'pairs'.
 #' @param timeout (Double scalar) The time to answer (in seconds)
 #' @param with_id (Logical scalar) Whether to show a ID page.
 #' @param with_welcome (Logical scalar) Whether to show a welcome page.
@@ -349,8 +354,8 @@ ART_demo <- function(num_items = 3L,
 #'
 ART_standalone  <- function(title = NULL,
                             num_items = NULL,
-                            type = "pairs",
-                            timeout = ifelse(type == "pairs", 10, 120),
+                            mode = "pairs",
+                            timeout = ifelse(mode == "pairs", 10, 120),
                             with_id = FALSE,
                             with_welcome = TRUE,
                             with_feedback = TRUE,
@@ -373,7 +378,7 @@ ART_standalone  <- function(title = NULL,
       with_finish = FALSE,
       with_feedback = with_feedback,
       dict = dict,
-      type  = type,
+      mode  = mode,
       timeout = timeout,
       ...),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
