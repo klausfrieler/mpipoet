@@ -29,13 +29,14 @@ ART_item_page <- function(item_number, item, num_items_in_test, mode = "pairs", 
   if(mode == "pairs"){
     prompt_id <- "ART_PROMPT_PAIRS"
     choices <- c("1", "0")
+    #choices <- sprintf("%s:%s", item$role, item$name)
     labels <- c(item$writer_item, item$non_writer_item)
     name <- ""
   } else{
     prompt_id <- "ART_PROMPT_SINGLE"
     choices <- as.character(as.integer(c(item$role != "foil", item$role == "foil")))
+    #choices <- sprintf("%s:%s", item$role, item$name)
     labels <- c(psychTestR::i18n("ART_YES"), psychTestR::i18n("ART_NO"))
-    #browser()
     name <- item$name
   }
 
@@ -60,25 +61,39 @@ ART_item_page <- function(item_number, item, num_items_in_test, mode = "pairs", 
   #, dict = dict)
 }
 
-ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank), dict = mpipoet::mpipoet_dict, timeout = 60,
+ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank),
+                           dict = mpipoet::mpipoet_dict, timeout = 60,
                            on_complete = NULL){
   #browser()
-  num_items <- min(num_items, nrow(mpipoet::ART_item_bank))
-  items <- mpipoet::ART_item_bank %>% sample_n(num_items)
-  choices <- items %>% pull(role)
+  num_items <- max(3, min(num_items, nrow(mpipoet::ART_item_bank)))
+  num_writers <- 0
+  while(num_writers/num_items < .64 || num_writers/num_items > .84 ){
+    items <- mpipoet::ART_item_bank %>% sample_n(num_items)
+    num_writers <- nrow(items %>% filter(role != "foil"))
+    num_foils <- nrow(items %>% filter(role == "foil"))
+    messagef("Found %d/%d writers/foils for %d items", num_writers, num_foils, num_items)
+  }
   labels <- items %>% pull(name)
+  choices <- sprintf("%s:%s", items %>% pull(role), labels)
   timer_script <- sprintf("var myTimer = true;can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer');", timeout * 1000)
+  psychTestR::join(
+    psychTestR::code_block(function(state, ...){
+      psychTestR::save_result(state, label = "items", value = paste(sprintf("%s:%s", items$role, items$name), collapse = ", "))
+      psychTestR::save_result(state, label = "num_writers", value = num_writers)
+      psychTestR::save_result(state, label = "num_foils", value = num_foils)
+    }),
+    psychTestR::checkbox_page(
+      label = "q0",
+      prompt = shiny::div(
+        shiny::tags$script(timer_script),
+        shiny::p(psychTestR::i18n("ART_PROMPT_SINGLE_PAGE", sub = list(time_out = as.character(timeout))))),
+      choices = choices,
+      labels = labels,
+      trigger_button_text = psychTestR::i18n("CONTINUE"),
+      save_answer = T,
+      on_complete = on_complete
+    )
 
-  psychTestR::checkbox_page(
-    label = "q0",
-    prompt = shiny::div(
-      shiny::tags$script(timer_script),
-      shiny::p(psychTestR::i18n("ART_PROMPT_SINGLE_PAGE", sub = list(time_out = as.character(timeout))))),
-    choices = choices,
-    labels = labels,
-    trigger_button_text = psychTestR::i18n("CONTINUE"),
-    save_answer = T,
-    on_complete = on_complete
   )
   #, dict = dict)
 }
@@ -92,9 +107,24 @@ ART_scoring <- function(mode = "pairs"){
       correct[correct == "next" | is.na(correct)] <- "0"
       correct <- as.integer(correct)
       points <- correct
+      question_labels <- results[[1]] %>% as.list() %>% names()
+      item_sequence <- psychTestR::get_local("item_sequence", state)
+      if(mode == "pairs"){
+        items <- sprintf("%s:%s-%s", question_labels,
+                         item_sequence$writer_items,
+                         item_sequence$non_writer_items) %>% paste(collapse = ", ")
+      } else {
+        items <- sprintf("%s:%s-%s", question_labels,
+                         item_sequence$name,
+                         item_sequence$role) %>% paste(collapse = ", ")
+
+      }
+      psychTestR::save_result(state, label = "items", value = items)
+
     } else{
       res <- results[[1]]$q0
-      num_writers = nrow(mpipoet::ART_item_bank %>% filter(role != "foil"))
+      num_writers = results[[1]]$num_writers
+      res <- purrr::map_chr(str_split(res, ":"), ~{.x[1]})
       correct <- sum(res != "foil" & res != "")
       incorrect <- sum(res == "foil")
       points <- correct - 2*incorrect
@@ -111,7 +141,6 @@ ART_scoring <- function(mode = "pairs"){
 
 ART_welcome_page <- function(dict = mpipoet::mpipoet_dict, mode = "pairs"){
   instructions_id <- sprintf("ART_INSTRUCTIONS_%s", toupper(mode))
-  print(instructions_id)
   psychTestR::new_timeline(
     psychTestR::one_button_page(
       body = shiny::div(
@@ -270,7 +299,7 @@ ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10){
 
 ART_main_test.single_page <- function(num_items = NULL, timeout = 60){
   #elts <- map(1:num_items, ~{ART_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
-  num_items <- nrow(mpipoet::ART_item_bank)
+  #num_items <- nrow(mpipoet::ART_item_bank)
   elts <- psychTestR::join(
     ART_item_page2(num_items, dict = dict, timeout = timeout),
     ART_scoring(mode = "single_page")
