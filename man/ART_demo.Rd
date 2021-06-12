@@ -7,7 +7,7 @@
 ART_demo(
   num_items = 3L,
   mode = "pairs",
-  timeout = ifelse(mode == "pairs", 10, 120),
+  timeout = ifelse(mode == "single_page", 180, 10),
   title = "ART Demo",
   dict = mpipoet::mpipoet_dict,
   admin_password = "demo",

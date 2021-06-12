@@ -1,12 +1,13 @@
 Package: mpipoet
 Title: Collection of tests and questionnaires for empirical poetry research
-Version: 1.3.0
+Version: 1.4.0
 Authors@R: c(
   person("Klaus", "Frieler", email = "kf@omniversum.de", role = c("aut","cre")),
-  person("Blohm", "Stefan", email = "stefan.blohm@ae.mpg.de.de", role = c("ctb"))
+  person("Blohm", "Stefan", email = "stefan.blohm@ae.mpg.de.de", role = c("ctb")),
+  person("Wagner", "Valentin", email = "valentin.wagner@ae.mpg.de.de", role = c("ctb"))
   )
-Maintainer: klaus frieler <kf@omniversum.de>
-Description: Implementation of  of tests and questionnaires for empirical poetry research at the Max Planck Institute for Empirical Aestheteics, Frankfurt/M., Germany, using on the psychTestR library.
+Maintainer: klaus frieler <klaus.frieler@ae.mpg.de>
+Description: Implementation of tests and questionnaires for empirical poetry research at the Max Planck Institute for Empirical Aestheteics, Frankfurt/M., Germany, using on the psychTestR library.
 License: MIT + file LICENSE
 URL: https://github.com/klausfrieler/mpipoet
 BugReports: https://github.com/klausfrieler/mpipoet/issues

@@ -12,7 +12,7 @@ ART(
   with_feedback = FALSE,
   label = "ART",
   dict = mpipoet::mpipoet_dict,
-  timeout = 10,
+  timeout = ifelse(mode == "single_page", 180, 10),
   ...
 )
 }

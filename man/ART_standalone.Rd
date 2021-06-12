@@ -8,7 +8,7 @@ ART_standalone(
   title = NULL,
   num_items = NULL,
   mode = "pairs",
-  timeout = ifelse(mode == "pairs", 10, 120),
+  timeout = ifelse(mode == "single_page", 180, 10),
   with_id = FALSE,
   with_welcome = TRUE,
   with_feedback = TRUE,
