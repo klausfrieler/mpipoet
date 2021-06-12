@@ -122,11 +122,12 @@ make_ui_month_and_year_select <-
   }
 
 make_ui_NAFC_with_timeout <- function(choices, labels = NULL,
-                             id = "response_ui", timeout = 30,
+                             id = "response_ui",
+                             timeout = NULL,
                              button_style = "",
                              has_all_equal = T,
                              all_equal_button_style ="",
-                             with_timer = TRUE,
+                             with_timer = !is.null(timeout),
                              ...) {
   stopifnot(is.character(choices), length(choices) > 0L,
             is.null(labels) || ((is.character(labels) || is.list(labels)) && length(labels) == length(choices)))
@@ -141,7 +142,7 @@ make_ui_NAFC_with_timeout <- function(choices, labels = NULL,
     buttons[[length(labels)]] <- shiny::p(buttons[[length(labels)]],
                                         style = all_equal_button_style)
   }
-  timer_script <- sprintf("can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer');", timeout * 1000)
+  timer_script <- sprintf("can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer ' + %d);", timeout * 1000, timeout)
 
   shiny::tags$div(id = id, buttons,
                   if(with_timer) shiny::tags$script(timer_script))
@@ -155,7 +156,7 @@ SRS_NAFC_page <- function(label, prompt, choices, labels = NULL,
                           response_ui_id = "response_ui",
                           on_complete = NULL,
                           admin_ui = NULL,
-                          timeout = 30,
+                          timeout = NULL,
                           has_all_equal = TRUE,
                           button_style = "",
                           ...) {
@@ -168,7 +169,6 @@ SRS_NAFC_page <- function(label, prompt, choices, labels = NULL,
                               timeout = timeout,
                               button_style = button_style,
                               has_all_equal = has_all_equal,
-                              with_timer = timeout > 0,
                               all_equal_button_style = sprintf("margin-top:10px;%s", button_style),
                      ...))
   get_answer <- function(state, input, ...) {

@@ -11,6 +11,7 @@ SRS_item_page <- function(item_number, item_id, num_items_in_test, item_bank, di
                     shiny::p(psychTestR::i18n("SRS_PROMPT", sub = list(time_out = as.character(timeout))))),
                   choices = as.character(1:5),
                   labels = c(item %>% dplyr::select(starts_with("item"))  %>% as.data.frame() %>% as.vector(), psychTestR::i18n("SRS_ALL_EQUAL")),
+                  timeout = timeout,
                   save_answer = T,
                   on_complete = on_complete
                 )
