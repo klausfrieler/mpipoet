@@ -14,11 +14,11 @@ get_prompt <- function(item_number,
                    test_length = if (is.null(num_items_in_test))
                      "?" else
                        num_items_in_test)),
-      style = "text_align: center;"
+      style = "text_align: center;max-width:80%"
     ),
     shiny::p(
       prompt,
-      style = "margin-left: 10%; margin-right: 10%;")
+      style = "margin-left: 20%; margin-right: 20%; text-align:center")
   )
 }
 
@@ -39,10 +39,6 @@ scoring <- function(questionnaire_id, label, items, subscales = c(), short_versi
       eval(parse(text = score_funcs[i]))(scores_raw[i])
     })
 
-    # hack for conditional in DEG
-    if (questionnaire_id == "DEG" && length(scores) == 10) {
-      scores <- insert(scores, ats = 3, values = NA)
-    }
 
     subscale_list <- list()
     for (i in 1:length(scores)) {
@@ -60,52 +56,23 @@ scoring <- function(questionnaire_id, label, items, subscales = c(), short_versi
 postprocess <- function(questionnaire_id, label, subscale_list, short_version, state, results = results) {
   for (subscale in names(subscale_list)) {
     scores <- subscale_list[[subscale]]
-    value <- if (questionnaire_id == "CCM") {
-      postprocess_ccm(questionnaire_id, label, subscale, results, scores)
-    } else if (questionnaire_id == "DEG") {
-      postprocess_deg(label, subscale, results, scores)
-    } else if (questionnaire_id == "GMS") {
-      if (subscale == "Start Age" && scores == 19) {
-        NA
-      } else {
-        mean(scores)
-      }
-    } else if (questionnaire_id == "MHE") {
-      postprocess_mhe(questionnaire_id, subscale_list[["General"]])
-    } else if (questionnaire_id == "SCA") {
-      if (short_version) {
-        postprocess_sca_short(scores)
-      } else {
-        postprocess_sca(scores)
-      }
-    } else if (questionnaire_id == "SCS") {
-      if (short_version) {
-        postprocess_scs_short(scores)
-      } else {
-        postprocess_scs(scores)
-      }
-    } else if (questionnaire_id == "SES") {
-      subscale <- tolower(gsub(" ", "_", subscale))
-      if (subscale == "esec") {
-        subscale <- "class"
-      }
-      postprocess_ses(subscale, results, scores)
-    } else {
-      mean(scores)
-    }
-
+    value <- mean(scores)
+    messagef("TEST: %s, subscale = %s, value = %f", questionnaire_id, subscale, value)
     psychTestR::save_result(place = state,
                             label = subscale,
                             value = value)
   }
 }
 
-main_test <- function(questionnaire_id, label, items, with_prompt_head = FALSE, short_version = FALSE, subscales = c(), offset = 1, arrange_vertically = TRUE, button_style = "") {
+main_test <- function(questionnaire_id, label, items, with_prompt_head = FALSE, short_version = FALSE, subscales = c(), offset = 1, arrange_vertically = 'auto', button_style = "") {
   elts <- c()
   if (questionnaire_id != "GMS") {
     elts <- c(elts, psychTestR::new_timeline(
       psychTestR::one_button_page(
-        body = psychTestR::i18n(stringr::str_interp("T${questionnaire_id}_0001_PROMPT")),
+        body = shiny::p(
+          psychTestR::i18n(stringr::str_interp("T${questionnaire_id}_0001_PROMPT")),
+          style = "margin-left:20%;margin-right:20%;text-align:justify"
+          ),
         button_text = psychTestR::i18n("CONTINUE")
       ),
       dict = mpipoet::mpipoet_dict
@@ -124,7 +91,15 @@ main_test <- function(questionnaire_id, label, items, with_prompt_head = FALSE, 
     num_of_options <- strsplit(item_bank_row$option_type, "-")[[1]][1]
     choices <- sprintf("btn%d_text", 1:num_of_options)
     choice_ids <- sprintf("T%s_%04d_CHOICE%d", questionnaire_id, question_numbers[counter], 1:num_of_options)
-
+    this_arrange_vertically <- arrange_vertically
+    if(arrange_vertically == "auto"){
+      if("layout" %in% names(item_bank_row)){
+        if(item_bank_row$layout == "vertical"){
+          this_arrange_vertically <- TRUE
+        }
+      }
+      this_arrange_vertically
+    }
     item_page <- psychTestR::new_timeline(
       psychTestR::NAFC_page(
         label = question_label,
@@ -135,7 +110,7 @@ main_test <- function(questionnaire_id, label, items, with_prompt_head = FALSE, 
           with_prompt_head
         ),
         choices = choices,
-        arrange_vertically = arrange_vertically,
+        arrange_vertically = this_arrange_vertically,
         button_style = button_style,
         labels = map(choice_ids, psychTestR::i18n)
       ),

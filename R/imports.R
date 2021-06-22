@@ -31,6 +31,9 @@ NULL
 #' @importFrom dplyr "sample_n"
 NULL
 
+#' @importFrom dplyr "arrange"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 

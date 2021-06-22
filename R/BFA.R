@@ -1,0 +1,32 @@
+#' BFA
+#'
+#' This function defines a BFA module for incorporation into a
+#' psychTestR timeline.
+#' Use this function if you want to include the Aesthetic Reponsiveness Assessment (AReA) in a
+#' battery of other tests, or if you want to add custom psychTestR
+#' pages to your test timeline.
+#' For a standalone implementation of the BFA,
+#' consider using \code{\link{BFA_standalone}()}.
+#' @param label (Character scalar) Three uppercase letter acronym of the questionnaire.
+#' This is also the label given to the results in the output file.
+#' @param dict (i18n_dict) The psyquest dictionary used for internationalisation.
+#' @param ... Further arguments to be passed to \code{\link{BFA}()}.
+#' @export
+BFA <- function(label = "BFA",
+                dict = mpipoet::mpipoet_dict,
+                arrange_vertically = "auto",
+                button_style = "min-width: 290px",
+                ...) {
+  stopifnot(purrr::is_scalar_character(label))
+
+  questionnaire_id <- "BFA"
+
+  main_test(
+    questionnaire_id = questionnaire_id,
+    label = label,
+    items = get_items(questionnaire_id),
+    offset = 1,
+    arrange_vertically = arrange_vertically,
+    button_style = button_style
+  )
+}

@@ -30,30 +30,26 @@ get_month <- function(date) {
 }
 
 get_items <- function(label, subscales = c(), short_version = FALSE, configuration_filepath = NULL) {
-  prompt_id <- NULL
-  items <- psyquest::psyquest_item_bank %>%
+  items <- mpipoet::mpipoet_item_bank %>%
     filter(stringr::str_detect(prompt_id, stringr::str_interp("T${label}")))
 
   if (!is.null(subscales)) {
     filtered_items <- as.data.frame(items[map(subscales, function(x) grep(gsub("(", "\\(", gsub(")", "\\)", x, fixed = TRUE), fixed = TRUE), items$subscales)) %>% unlist() %>% unique(), ])
-    return(filtered_items[order(filtered_items$prompt_id), ])
+    return(filtered_items %>% dplyr::arrange(prompt_id))
   }
 
-  question_ids <- c()
-
-
-  items[order(items$prompt_id), ]
+  items %>% dplyr::arrange(prompt_id)
 }
 
 problems_info <- function(researcher_email) {
   problems_info_html <- c()
   for (i in 1:length(languages())) {
     span <- shiny::tags$span(
-      psyquest::psyquest_dict$translate("PROBLEMS_INFO_1", languages()[[i]]),
+      mpipoet::mpipoet_dict$translate("PROBLEMS_INFO_1", languages()[[i]]),
       shiny::tags$br(),
-      psyquest::psyquest_dict$translate("PROBLEMS_INFO_2", languages()[[i]]),
+      mpipoet::mpipoet_dict$translate("PROBLEMS_INFO_2", languages()[[i]]),
       shiny::tags$a(href = paste0("mailto:", researcher_email), researcher_email),
-      psyquest::psyquest_dict$translate("PROBLEMS_INFO_3", languages()[[i]]))
+      mpipoet::mpipoet_dict$translate("PROBLEMS_INFO_3", languages()[[i]]))
     problems_info_html[[i]] <- span
   }
 

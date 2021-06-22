@@ -49,7 +49,7 @@ standalone <- function(label,
   items <-
     get_items(label, subscales, short_version, configuration_filepath)
 
-  elts <- c(
+  elts <- psychTestR::join(
     psychTestR::new_timeline(
       psychTestR::get_p_id(
         prompt = psychTestR::i18n("ENTER_ID"),
@@ -93,10 +93,60 @@ standalone <- function(label,
       researcher_email = researcher_email,
       demo = FALSE,
       languages = languages,
-      logo = "www_mpipoet/images/longgold_logo_transparent.png",
-      logo_width = "100px",
+      logo = "www_mpipoet/images/mpiea_logo.png",
+      logo_width = "200px",
       logo_height = "auto"
     )
   )
 }
 
+#' ARA Standalone
+#'
+#' This function launches a standalone testing session for the ARA questionnaire.
+#' ARA stands for 'Aesthetic Responsiveness Assessment (AReA)'.
+#'
+#' @param languages (Character vector)
+#' Determines the languages available to participants.
+#' Possible languages include \code{"en"} (English), and \code{"de"} (German).
+#' The first language is selected by default.
+#'
+#' @param ... Further arguments to be passed to \code{\link{ARA_standalone}()}.
+#'
+#' @export
+ARA_standalone <-
+  function(languages = mpipoet::languages(), ...)
+    standalone(label = "ARA", languages = languages, ...)
+
+#' BFI Standalone
+#'
+#' This function launches a standalone testing session for the ARA questionnaire.
+#' BFI stands for 'Big Five Inventory'.
+#'
+#' @param languages (Character vector)
+#' Determines the languages available to participants.
+#' Possible languages include \code{"en"} (English), and \code{"de"} (German).
+#' The first language is selected by default.
+#'
+#' @param ... Further arguments to be passed to \code{\link{BFI_standalone}()}.
+#'
+#' @export
+BFI_standalone <-
+  function(languages = mpipoet::languages(), ...)
+    standalone(label = "BFI", languages = languages, ...)
+
+#' BFA Standalone
+#'
+#' This function launches a standalone testing session for the BFA questionnaire.
+#' BFA stands for 'Big Five Aspects Scale'.
+#'
+#' @param languages (Character vector)
+#' Determines the languages available to participants.
+#' Possible languages include \code{"en"} (English), and \code{"de"} (German).
+#' The first language is selected by default.
+#'
+#' @param ... Further arguments to be passed to \code{\link{BFA_standalone}()}.
+#'
+#' @export
+BFA_standalone <-
+  function(languages = mpipoet::languages(), ...)
+    standalone(label = "BFA", languages = languages, ...)

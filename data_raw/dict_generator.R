@@ -5,10 +5,11 @@ mpipoet_dict_raw <-
     dict <- readxl::read_xlsx(filepath) %>%
       filter(nchar(de) != 0, nchar(en) != 0)
     acronym <- substr(basename(filepath), 1, 3)
-    if(toupper(acronym) == "GEN"){
-      return(dict)
+    #messagef("Reading %s_dict", acronym)
+    if(toupper(acronym) %in%  c("ART", "SRS")){
+      dict <- dict %>% mutate(key = sprintf("%s_%s", acronym, key))
     }
-    dict %>% mutate(key = sprintf("%s_%s", acronym, key))
+    return(dict)
   })
 
 mpipoet_dict <- psychTestR::i18n_dict$new(mpipoet_dict_raw)
