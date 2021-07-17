@@ -21,6 +21,24 @@ tagify <- function(x) {
   } else x
 }
 
+tagify_with_line_breaks <- function(x, sep = "//", style = NULL){
+  stopifnot(is.character(x) || is(x, "shiny.tag"))
+  if(!is.character(x)){
+    return(x)
+  }
+  elems <- strsplit(x, sep)[[1]]
+  ret <- shiny::p()
+  for(i in seq_along(elems)){
+    if(i != length(elems)) {
+      ret <- shiny::tagAppendChildren(ret, shiny::span(elems[[i]]), shiny::br())
+    }
+    else{
+      ret <- shiny::tagAppendChildren(ret, shiny::span(elems[[i]]))
+
+    }
+  }
+  shiny::tagAppendAttributes(ret, style = style)
+}
 get_year <- function(date) {
   as.numeric(strsplit(as.character(date), "-")[[1]][1])
 }

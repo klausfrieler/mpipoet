@@ -186,3 +186,10 @@ SRS_NAFC_page <- function(label, prompt, choices, labels = NULL,
                    validate = validate, on_complete = on_complete, final = FALSE,
                    admin_ui = admin_ui)
 }
+
+make_ui_NAFC_with_keys <- function(id = "response_ui",...) {
+  marker_seq <- shiny::textInput("marker_seq", label="", value="", width = 100)
+  marker_input <- shiny::div(id = "marker_input", marker_seq )
+
+  shiny::tags$div(id = id, marker_input, shiny::tags$script(shiny::HTML(key_logger_script_SLS)))
+}

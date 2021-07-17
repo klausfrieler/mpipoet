@@ -15,6 +15,12 @@ read_ART_item_bank <- function(){
   ART_item_bank
 }
 
+read_SLS_item_bank <- function(){
+  SLS_item_bank <- readxl::read_xlsx("data_raw/item_banks/SLS_item_bank.xlsx")
+  #SRS_item_bank[SRS_item_bank$correct == "none",]$correct <- "item5"
+  usethis::use_data(SLS_item_bank, overwrite = TRUE)
+  SLS_item_bank
+}
 read_item_banks <- function(){
   item_bank_files <- list.files("./data_raw/item_banks", pattern = "*.xlsx", full.names =  T)
   test_ids <- item_bank_files %>% basename() %>% strsplit("_") %>% map_chr(~{.x[1]})
@@ -38,4 +44,5 @@ read_item_banks <- function(){
 
 read_SRS_item_bank()
 read_ART_item_bank()
+read_SLS_item_bank()
 read_item_banks()

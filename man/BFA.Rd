@@ -8,6 +8,7 @@ BFA(
   label = "BFA",
   dict = mpipoet::mpipoet_dict,
   arrange_vertically = "auto",
+  button_style = "min-width: 290px",
   ...
 )
 }
@@ -16,6 +17,10 @@ BFA(
 This is also the label given to the results in the output file.}
 
 \item{dict}{(i18n_dict) The psyquest dictionary used for internationalisation.}
+
+\item{arrange_vertically}{(Boolean scalar) Flag whether to arrange buttons vertically.}
+
+\item{button_style}{(Character scalar) CSS style for buttons}
 
 \item{...}{Further arguments to be passed to \code{\link{BFA}()}.}
 }

@@ -222,7 +222,7 @@ SRS_feedback_with_score <- function(dict = mpipoet::mpipoet_dict){
 #' @param ... Further arguments to be passed to \code{SRS_main_test()}.
 #' @export
 #'
-SRS <- function(num_items = 36L,
+SRS <- function(num_items = NULL,
                 with_welcome = TRUE,
                 with_training = TRUE,
                 with_finish = TRUE,
@@ -385,7 +385,7 @@ SRS_demo <- function(num_items = 3L,
 #' @export
 #'
 SRS_standalone  <- function(title = NULL,
-                            num_items = 36L,
+                            num_items = NULL,
                             timeout = 10,
                             with_id = FALSE,
                             with_welcome = TRUE,

@@ -9,6 +9,8 @@
 #' consider using \code{\link{ARA_standalone}()}.
 #' @param label (Character scalar) Three uppercase letter acronym of the questionnaire.
 #' This is also the label given to the results in the output file.
+#' @param arrange_vertically (Boolean scalar) Flag whether to arrange buttons vertically.
+#' @param button_style (Character scalar) CSS style for buttons
 #' @param dict (i18n_dict) The psyquest dictionary used for internationalisation.
 #' @param ... Further arguments to be passed to \code{\link{ARA}()}.
 #' @export

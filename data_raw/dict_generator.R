@@ -6,7 +6,7 @@ mpipoet_dict_raw <-
       filter(nchar(de) != 0, nchar(en) != 0)
     acronym <- substr(basename(filepath), 1, 3)
     #messagef("Reading %s_dict", acronym)
-    if(toupper(acronym) %in%  c("ART", "SRS")){
+    if(toupper(acronym) %in%  c("ART", "SRS", "SLS")){
       dict <- dict %>% mutate(key = sprintf("%s_%s", acronym, key))
     }
     return(dict)
