@@ -5,7 +5,7 @@
 \title{SRS}
 \usage{
 SRS(
-  num_items = 36L,
+  num_items = NULL,
   with_welcome = TRUE,
   with_training = TRUE,
   with_finish = TRUE,

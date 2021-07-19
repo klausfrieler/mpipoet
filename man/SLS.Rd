@@ -5,14 +5,13 @@
 \title{SLS}
 \usage{
 SLS(
-  num_items = 36L,
+  num_items = NULL,
   with_welcome = TRUE,
   with_training = FALSE,
   with_finish = TRUE,
   with_feedback = FALSE,
   label = "SLS",
   dict = mpipoet::mpipoet_dict,
-  timeout = 10,
   ...
 )
 }
@@ -31,9 +30,9 @@ SLS(
 
 \item{dict}{The psychTestR dictionary used for internationalisation.}
 
-\item{timeout}{(Double scalar) The time to answer (in seconds)}
-
 \item{...}{Further arguments to be passed to \code{SLS_main_test()}.}
+
+\item{timeout}{(Double scalar) The time to answer (in seconds)}
 }
 \description{
 This function defines a SLS  module for incorporation into a

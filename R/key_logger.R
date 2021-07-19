@@ -5,7 +5,7 @@ document.getElementById('marker_seq').style.visibility = 'hidden';
 window.startTime = new Date().getTime();
 
 window.onkeypress = register_key
-console.log('Added press event listener')
+console.log('Added keypress event listener')
 
 String.prototype.toMMSSZZ = function () {
     var msec_num = parseInt(this, 10); // don't forget the second param
@@ -37,7 +37,21 @@ function register_key(e) {
   Shiny.onInputChange('next_page', performance.now())
 }
 "
+key_proceed_script <- "
+window.onkeypress = shiny_next
 
+function shiny_next(e) {
+
+  var key = e.which || e.keyCode;
+  console.log('Pressed key:' + key);
+  //if (key != 102 && key != 106) { // 'j' and 'f'
+    // do nothing
+    //console.log('Invalid key')
+  //  return
+  //}
+  Shiny.onInputChange('next_page', performance.now())
+}
+"
 clean_up_script <- "
   window.onkeypress = null;
 

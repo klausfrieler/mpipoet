@@ -16,7 +16,7 @@ read_ART_item_bank <- function(){
 }
 
 read_SLS_item_bank <- function(){
-  SLS_item_bank <- readxl::read_xlsx("data_raw/item_banks/SLS_item_bank.xlsx")
+  SLS_item_bank <- readxl::read_xlsx("data_raw/item_banks/SLS_item_bank.xlsx") %>% mutate(item_id = item_id %% 100)
   #SRS_item_bank[SRS_item_bank$correct == "none",]$correct <- "item5"
   usethis::use_data(SLS_item_bank, overwrite = TRUE)
   SLS_item_bank
