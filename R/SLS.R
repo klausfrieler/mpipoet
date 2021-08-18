@@ -64,7 +64,7 @@ get_SLS_practice_page <-  function(practice_items = NULL, num_practice_items, it
       practice_item_counter <- psychTestR::get_local("practice_item_counter", state)
       if(practice_item_counter > 1){
         correct <- psychTestR::get_local("last_result", state)
-        FEEDBACK <- ifelse(!is.null(correct) && correct , "SLS_EXAMPLE_FEEDBACK_CORRECT", "SLS_EXAMPLE_FEEDBACK_INCORRECT")
+        FEEDBACK <- ifelse(!is.null(correct) && !is.na(correct) && correct , "SLS_EXAMPLE_FEEDBACK_CORRECT", "SLS_EXAMPLE_FEEDBACK_INCORRECT")
         auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"), timeout = 1000L)
         # no_button_page(body = shiny::p(psychTestR::i18n(FEEDBACK)),
         #                button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
