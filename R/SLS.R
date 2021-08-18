@@ -41,12 +41,13 @@ SLS_item_page <- function(item_number, num_items_in_test, item_bank, training = 
   mpipoet:::SLS_NAFC_page(label = sprintf("q%s", item_number),
                           item_num = item_number,
                           prompt = shiny::div(
-                            shiny::h4(psychTestR::i18n(PAGE_HEADER,
-                                                       sub = list(page_no = item_number,
-                                                                  num_pages = num_items_in_test))),
+                            # shiny::h4(psychTestR::i18n(PAGE_HEADER,
+                            #                            sub = list(page_no = item_number,
+                            #                                       num_pages = num_items_in_test))),
                             if(item_number == 1)shiny::tags$script("var myTimer = false;"),
                             tagify_with_line_breaks(item_bank[item_bank$item_id == item_number,]$sentence,
-                                                    style = "font-size:large;text-align:justify;margin-left:30%;min-width:40em;")),
+                                                    style = "font-size:large;text-align:justify;margin:auto;width:30em"),
+                            style = "width:100%;height:200px"),
                           correct = item_bank[item_number,]$correct,
                           save_answer = !training,
                           on_complete = NULL
@@ -64,8 +65,9 @@ get_SLS_practice_page <-  function(practice_items = NULL, num_practice_items, it
       if(practice_item_counter > 1){
         correct <- psychTestR::get_local("last_result", state)
         FEEDBACK <- ifelse(!is.null(correct) && correct , "SLS_EXAMPLE_FEEDBACK_CORRECT", "SLS_EXAMPLE_FEEDBACK_INCORRECT")
-        no_button_page(body = shiny::p(psychTestR::i18n(FEEDBACK)),
-                       button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
+        auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"), timeout = 1000L)
+        # no_button_page(body = shiny::p(psychTestR::i18n(FEEDBACK)),
+        #                button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
       }
       else{
         no_button_page(body = shiny::p(psychTestR::i18n("SLS_INSTRUCTIONS3"), style = "margin-left:30%;text-align:justify"),
@@ -96,8 +98,8 @@ make_SLS_practice_page <- function(item, num_practice_items, item_bank){
   )
 
 }
-SLS_practice <- function(num_practice_items = 3, item_bank = mpipoet::SLS_item_bank, dict = mpipoet::mpipoet_dict){
-  num_practice_items <- max(1, min(num_practice_items, 3))
+SLS_practice <- function(num_practice_items = 10L, item_bank = mpipoet::SLS_item_bank, dict = mpipoet::mpipoet_dict){
+  num_practice_items <- max(1, min(num_practice_items, 10L))
   practice_items <- item_bank %>% filter(type == "Practice") %>%
     slice(1:num_practice_items)
 
@@ -119,12 +121,17 @@ SLS_practice <- function(num_practice_items = 3, item_bank = mpipoet::SLS_item_b
       psychTestR::reactive_page(function(state, ...){
         correct <- psychTestR::get_local("last_result", state)
         FEEDBACK <- ifelse(correct, "SLS_EXAMPLE_FEEDBACK_CORRECT", "SLS_EXAMPLE_FEEDBACK_INCORRECT")
+        auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"), timeout = 1000L)
 
-        no_button_page(body = shiny::div(
-          shiny::p(psychTestR::i18n(FEEDBACK)),
-          shiny::p(psychTestR::i18n("SLS_START_MAIN_TEST"))),
-          button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
-        })),
+        # no_button_page(body = shiny::div(
+        #   shiny::p(psychTestR::i18n(FEEDBACK)),
+        #   shiny::p(psychTestR::i18n("SLS_START_MAIN_TEST"))),
+        #   button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
+        }),
+      no_button_page(body = shiny::div(
+        shiny::p(psychTestR::i18n("SLS_START_MAIN_TEST"))),
+        button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
+    ),
     dict = dict
   )
 }
@@ -229,11 +236,12 @@ SLS <- function(num_items = NULL,
                 with_feedback = FALSE,
                 label = "SLS",
                 dict = mpipoet::mpipoet_dict,
+                num_practice_items = 10L,
                 ...){
   psychTestR::join(
     psychTestR::begin_module(label),
     if (with_welcome) SLS_welcome_page(),
-    if (with_training) SLS_practice(num_practice_items = 3, mpipoet::SLS_item_bank, dict = dict),
+    if (with_training) SLS_practice(num_practice_items = num_practice_items, mpipoet::SLS_item_bank, dict = dict),
     psychTestR::new_timeline(
       SLS_main_test(num_items = num_items),
       dict = dict),
@@ -258,12 +266,13 @@ SLS_main_test <- function(num_items = NULL){
   }
   num_items <- min(num_items, nrow(item_bank))
   elts <- c()
+  cross_hair_page <- auto_proceed_info_page(body = shiny::h1("+", style = "text-align:center"), timeout = 500L)
   for(item_number in 1:num_items){
 
     #printf("Created item with %s, %d", correct_answer, nchar(correct_answer))
     #browser()
     item <- SLS_item_page(item_number, num_items, item_bank)
-    elts <- c(elts,item)
+    elts <- c(elts,cross_hair_page, item)
   }
   #browser()
   #elts <- map(1:num_items, ~{SLS_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
@@ -353,6 +362,7 @@ SLS_standalone  <- function(title = NULL,
                             with_welcome = TRUE,
                             with_training = FALSE,
                             with_feedback = TRUE,
+                            num_practice_items = 10L,
                             admin_password = "SLS",
                             researcher_email = "klaus.frieler@ae.mpg.de",
                             languages = c("de"),
@@ -372,6 +382,7 @@ SLS_standalone  <- function(title = NULL,
       with_training = with_training,
       with_finish = FALSE,
       with_feedback = with_feedback,
+      num_practice_items = num_practice_items,
       dict = dict,
       ...),
     psychTestR::elt_save_results_to_disk(complete = TRUE),

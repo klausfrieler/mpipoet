@@ -188,8 +188,8 @@ SRS_NAFC_page <- function(label, prompt, choices, labels = NULL,
 }
 
 make_ui_NAFC_with_keys <- function(id = "response_ui",...) {
-  marker_seq <- shiny::textInput("marker_seq", label="", value="", width = 100)
-  marker_input <- shiny::div(id = "marker_input", marker_seq )
+  marker_seq <- shiny::textInput("marker_seq", label="", value="")
+  marker_input <- shiny::div(id = "marker_input", marker_seq, style = "height:1px")
 
   shiny::tags$div(id = id, marker_input, shiny::tags$script(shiny::HTML(key_logger_script_SLS)))
 }
@@ -202,4 +202,23 @@ no_button_page <-function(body, button_text, admin_ui = NULL){
       psychTestR::trigger_button("next", button_text, style="background-color:#ffffff;")
     )
     psychTestR::page(ui = body, admin_ui = admin_ui, final = FALSE)
+}
+
+auto_proceed_info_page <- function(body, timeout = 1500L, admin_ui = NULL){
+  timer_script <- sprintf("var myTimer = true;
+                          can_advance = true;
+                          if(myTimer)window.clearTimeout(myTimer);
+                          myTimer = window.setTimeout(function(){
+                          if(can_advance){
+                          Shiny.onInputChange('next_page', performance.now());
+                          console.log('TIMEOUT')}}, %d);
+                          console.log('Set timer: ' + %d + 's');", timeout, timeout)
+  body <-
+    shiny::tags$div(
+      tagify(body),
+      shiny::tags$script(shiny::HTML(timer_script)),
+      style = "height:181px"
+    )
+  psychTestR::page(ui = body, admin_ui = admin_ui, final = FALSE)
+
 }

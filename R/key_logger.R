@@ -52,6 +52,7 @@ function shiny_next(e) {
   Shiny.onInputChange('next_page', performance.now())
 }
 "
+
 clean_up_script <- "
   window.onkeypress = null;
 
