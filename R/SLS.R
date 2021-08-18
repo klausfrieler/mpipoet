@@ -266,7 +266,7 @@ SLS_main_test <- function(num_items = NULL){
   }
   num_items <- min(num_items, nrow(item_bank))
   elts <- c()
-  cross_hair_page <- auto_proceed_info_page(body = shiny::h1("+", style = "text-align:center"), timeout = 500L)
+  cross_hair_page <- auto_proceed_info_page(body = shiny::h1("+", style = "text-align:center"), timeout = 1500L)
   for(item_number in 1:num_items){
 
     #printf("Created item with %s, %d", correct_answer, nchar(correct_answer))
