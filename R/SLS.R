@@ -136,9 +136,15 @@ SLS_practice <- function(num_practice_items = 10L, item_bank = mpipoet::SLS_item
   )
 }
 
-SLS_scoring <- function(){
+SLS_scoring <- function(label){
   psychTestR::code_block(function(state, ...) {
     results <- psychTestR::get_results(state = state, complete = FALSE) %>% as.list()
+    results <- results[[label]]
+    if(is.null(results)){
+      warning("SRS_scoring: Found invalid results")
+      return()
+    }
+
     results <- results$SLS %>% dplyr::bind_rows() %>%
       mutate(total_time = cumsum(tidyr::replace_na(time,0)), cum_correct = cumsum(tidyr::replace_na(correct, 0)))
     results_red <- results %>% filter(total_time <= 3 * 60 * 1000)
@@ -243,7 +249,7 @@ SLS <- function(num_items = NULL,
     if (with_welcome) SLS_welcome_page(),
     if (with_training) SLS_practice(num_practice_items = num_practice_items, mpipoet::SLS_item_bank, dict = dict),
     psychTestR::new_timeline(
-      SLS_main_test(num_items = num_items),
+      SLS_main_test(num_items = num_items, label = label),
       dict = dict),
     if(with_feedback) SLS_feedback_with_score(dict = dict),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
@@ -258,7 +264,7 @@ SLS <- function(num_items = NULL,
 }
 
 
-SLS_main_test <- function(num_items = NULL){
+SLS_main_test <- function(num_items = NULL, label = "SLS"){
 
   item_bank <- mpipoet::SLS_item_bank %>% filter(type == "Test")
   if(is.null(num_items)){
@@ -278,7 +284,7 @@ SLS_main_test <- function(num_items = NULL){
   #elts <- map(1:num_items, ~{SLS_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
   elts <- psychTestR::join(
     elts,
-    SLS_scoring()
+    SLS_scoring(label)
   )
   elts
 }

@@ -114,15 +114,21 @@ ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank),
   #, dict = dict)
 }
 
-ART_scoring <- function(mode = "pairs"){
+ART_scoring <- function(label, mode = "pairs"){
   psychTestR::code_block(function(state, ...) {
-    results <- psychTestR::get_results(state = state, complete = FALSE)
+    results <- psychTestR::get_results(state = state, complete = FALSE) %>% as.list()
+    results <- results[[label]]
+    if(is.null(results)){
+      warning("ART_scoring: Found invalid results")
+      return()
+    }
+
     if(mode %in% c("pairs", "single")){
-      correct <- results[[1]] %>% unlist()
+      correct <- results %>% unlist()
       correct[correct == "next" | is.na(correct)] <- "0"
       correct <- as.integer(correct)
       points <- correct
-      question_labels <- results[[1]] %>% as.list() %>% names()
+      question_labels <- results %>% as.list() %>% names()
       item_sequence <- psychTestR::get_local("item_sequence", state)
       if(mode == "pairs"){
         items <- sprintf("%s:%s-%s", question_labels,
@@ -137,8 +143,8 @@ ART_scoring <- function(mode = "pairs"){
       psychTestR::save_result(state, label = "items", value = items)
 
     } else{
-      res <- results[[1]]$q0
-      num_writers = results[[1]]$num_writers
+      res <- results$q0
+      num_writers = results$num_writers
       res <- purrr::map_chr(stringr::str_split(res, ":"), ~{.x[1]})
       correct <- sum(res != "foil" & res != "")
       incorrect <- sum(res == "foil")

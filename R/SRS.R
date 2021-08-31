@@ -131,12 +131,17 @@ SRS_practice <- function(dict = mpipoet::mpipoet_dict, timeout = 10){
     )
 }
 
-SRS_scoring <- function(){
+SRS_scoring <- function(label){
   psychTestR::code_block(function(state, ...) {
-    results <- psychTestR::get_results(state = state, complete = FALSE)
-    item_ids <- stringr::str_extract(names(results[[1]]), "[0-9]+")
-    answers <- sprintf("item%s", results[[1]])
-    #browser()
+    results <- psychTestR::get_results(state = state, complete = FALSE) %>% as.list()
+    results <- results[[label]]
+    if(is.null(results)){
+      warning("SRS_scoring: Found invalid results")
+      return()
+    }
+    item_ids <- stringr::str_extract(names(results), "[0-9]+")
+    answers <- sprintf("item%s", results)
+    browser()
     correct <- mpipoet::SRS_item_bank %>%
       mutate(ID = as.character(ID)) %>% filter(type == "test", ID %in% item_ids) %>%
       select(ID, correct) %>% left_join(tibble(ID = item_ids, answer = answers)) %>%
@@ -236,7 +241,7 @@ SRS <- function(num_items = NULL,
     if (with_welcome) SRS_welcome_page(),
     if (with_training) SRS_practice(dict = dict, timeout = timeout),
     psychTestR::new_timeline(
-      SRS_main_test(num_items = num_items),
+      SRS_main_test(num_items = num_items, label = label),
       dict = dict),
     if(with_feedback) SRS_feedback_with_score(dict = dict),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
@@ -268,7 +273,7 @@ get_SRS_item_sequence <- function(num_items = NULL, seed = NULL){
 
 }
 
-SRS_main_test <- function(num_items = NULL, timeout = 10){
+SRS_main_test <- function(num_items = NULL, timeout = 10, label = "SRS" ){
 
   item_bank <- mpipoet::SRS_item_bank %>% filter(type == "test")
   if(is.null(num_items)){
@@ -283,7 +288,7 @@ SRS_main_test <- function(num_items = NULL, timeout = 10){
       sum()
     messagef("Code block, seed %d", seed)
     item_sequence <- get_SRS_item_sequence(num_items, seed)
-    print(item_sequence)
+    #print(item_sequence)
     psychTestR::set_local(key = "item_sequence", value = item_sequence[1:num_items], state = state)
     psychTestR::set_local(key = "item_number", value = 1L, state = state)
 
@@ -306,7 +311,7 @@ SRS_main_test <- function(num_items = NULL, timeout = 10){
   #elts <- map(1:num_items, ~{SRS_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
   elts <- psychTestR::join(
     elts,
-    SRS_scoring()
+    SRS_scoring(label)
   )
   elts
 }
