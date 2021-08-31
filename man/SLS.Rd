@@ -12,6 +12,7 @@ SLS(
   with_feedback = FALSE,
   label = "SLS",
   dict = mpipoet::mpipoet_dict,
+  num_practice_items = 10L,
   ...
 )
 }

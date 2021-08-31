@@ -11,6 +11,7 @@ SLS_standalone(
   with_welcome = TRUE,
   with_training = FALSE,
   with_feedback = TRUE,
+  num_practice_items = 10L,
   admin_password = "SLS",
   researcher_email = "klaus.frieler@ae.mpg.de",
   languages = c("de"),
