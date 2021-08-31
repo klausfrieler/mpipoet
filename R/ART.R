@@ -250,11 +250,11 @@ ART <- function(num_items = NULL,
                 ...){
   if(mode %in% c("single", "pairs")){
     main <-  psychTestR::new_timeline(
-      ART_main_test(num_items = num_items, mode = mode, timeout = timeout),
+      ART_main_test(num_items = num_items, mode = mode, timeout = timeout, label = label),
       dict = dict)
   } else {
     main <- psychTestR::new_timeline(
-      ART_main_test.single_page(num_items = num_items, timeout = timeout),
+      ART_main_test.single_page(num_items = num_items, timeout = timeout, label = label),
       dict = dict)
 
   }
@@ -275,7 +275,7 @@ ART <- function(num_items = NULL,
 
 }
 
-ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10){
+ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10, label = "ART"){
   #browser()
   #item_bank <- mpipoet::ART_item_bank %>% filter(mode == "test")
   if(is.null(num_items)){
@@ -317,17 +317,17 @@ ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10){
   #elts <- map(1:num_items, ~{ART_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
   elts <- psychTestR::join(
     elts,
-    ART_scoring(mode = mode)
+    ART_scoring(label, mode = mode)
   )
   elts
 }
 
-ART_main_test.single_page <- function(num_items = NULL, timeout = 180){
+ART_main_test.single_page <- function(num_items = NULL, timeout = 180, label = "ART"){
   #elts <- map(1:num_items, ~{ART_item_page(.x, num_items, item_bank, dict = dict, timeout = timeout)})
   #num_items <- nrow(mpipoet::ART_item_bank)
   elts <- psychTestR::join(
     ART_item_page2(num_items, dict = dict, timeout = timeout),
-    ART_scoring(mode = "single_page")
+    ART_scoring(label, mode = "single_page")
   )
   elts
 }
