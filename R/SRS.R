@@ -70,7 +70,7 @@ make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
     }
     else if(page_type == "too_slow"){
       prompt <- shiny::div(
-        shiny::p(psychTestR::i18n("EXAMPLE_FEEDBACK_TOO_SLOW")))
+        shiny::p(psychTestR::i18n("SRS_EXAMPLE_FEEDBACK_TOO_SLOW")))
     }
     page <- SRS_NAFC_page(label = "ex1",
                           prompt = prompt,
