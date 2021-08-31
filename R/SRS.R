@@ -141,7 +141,7 @@ SRS_scoring <- function(label){
     }
     item_ids <- stringr::str_extract(names(results), "[0-9]+")
     answers <- sprintf("item%s", results)
-    browser()
+    #browser()
     correct <- mpipoet::SRS_item_bank %>%
       mutate(ID = as.character(ID)) %>% filter(type == "test", ID %in% item_ids) %>%
       select(ID, correct) %>% left_join(tibble(ID = item_ids, answer = answers)) %>%
