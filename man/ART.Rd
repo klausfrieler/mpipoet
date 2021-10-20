@@ -8,7 +8,7 @@ ART(
   num_items = NULL,
   mode = "pairs",
   with_welcome = TRUE,
-  with_finish = TRUE,
+  with_finish = FALSE,
   with_feedback = FALSE,
   label = "ART",
   dict = mpipoet::mpipoet_dict,

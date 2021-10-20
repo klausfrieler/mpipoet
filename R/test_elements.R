@@ -222,3 +222,66 @@ auto_proceed_info_page <- function(body, timeout = 1500L, admin_ui = NULL){
   psychTestR::page(ui = body, admin_ui = admin_ui, final = FALSE)
 
 }
+
+make_text_input_table <- function(pre_labels, post_labels, width = "20px", placeholder = NULL, style = NULL){
+  #browser()
+  num_rows <- length(pre_labels)
+  if(num_rows != length(post_labels)){
+    stopifnot(length(post_labels) == 1)
+    post_labels <- rep(post_labels[1], num_rows)
+  }
+  rows <-
+    shiny::tagList(
+      lapply(1:num_rows, function(i){
+        inputID <- sprintf("text_input%d", i)
+        #value <- restoreInput(id = inputId, default = "")
+        shiny::tags$tr(
+          shiny::tags$td(pre_labels[i], style = "float:left;display:block;border:0px solid black;padding:2em"),
+          shiny::tags$td(
+            shiny::tags$input(id = inputID,
+                              type = "text",
+                              value = "",
+                              placeholder = placeholder, style = "height:2em;width:50px"), style = "width:50px;"),
+        shiny::tags$td(post_labels[i], style = "float:left;border:0px solid black;padding:2em"),
+        class = "form-group shiny-input-container",
+        style = "border:0px solid black;font-size:10pt")
+        }))
+
+  shiny::tags$table(
+    rows, class = "form-group shiny-input-container"
+  )
+}
+
+multi_text_input_page <- function(label,
+                                  prompt,
+                                  item_prompts,
+                                  post_labels = "",
+                                  input = NULL,
+                                  save_answer = TRUE,
+                                  placeholder = NULL,
+                                  button_text = "Next",
+                                  width = "50px",
+                                  validate = NULL,
+                                  on_complete = NULL,
+                                  admin_ui = NULL) {
+  #stopifnot(is.scalar.character(label))
+  num_inputs <- length(item_prompts)
+  text_inputs <- make_text_input_table(item_prompts, post_labels = post_labels)
+  get_answer <- function(input, ...) {
+    tmp <- reactiveValuesToList(input)
+    elems <- names(tmp)[grepl("text_input[0-9]+",names(tmp))]
+    paste(tmp[elems], collapse = ",")
+  }
+  body = shiny::div(
+    #onload = paste(sprintf("document.getElementById('text_input%d').value = '';", 1:num_inputs), collapse = ""),
+    onload = ";",
+    tagify(prompt),
+    text_inputs,
+    style = "margin-left:0%;width:50%;min-width:400px;text-align:justify;margin-bottom:30px"
+  )
+  ui <- shiny::div(body, psychTestR::trigger_button("next", button_text))
+
+  psychTestR::page(ui = ui, label = label, get_answer = get_answer, save_answer = save_answer,
+       validate = validate, on_complete = on_complete, final = FALSE,
+       admin_ui = admin_ui)
+}
