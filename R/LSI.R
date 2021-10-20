@@ -62,10 +62,16 @@ LSI_standalone  <- function(title = NULL,
                              validate = validate_id),
         dict = dict),
     LSI(
+      label = "LSI",
       with_finish = FALSE,
       dict = dict,
       ...),
     psychTestR::elt_save_results_to_disk(complete = TRUE),
+    psychTestR::code_block(function(state, ...) {
+      results <- psychTestR::get_results(state = state, complete = FALSE) %>% as.list()
+      res <- parse_LSI_results(results$LSI)
+      browser()
+    }),
     LSI_final_page(dict = dict)
   )
   if(is.null(title)){
@@ -152,4 +158,45 @@ LSI_final_page <- function(dict = mpipoet::mpipoet_dict){
                    style = "margin-left:0%;display:block")
       )
     ), dict = dict)
+}
+
+parse_LSI_results <- function(results){
+  browser()
+  if("LSI" %in% names(results)){
+    LSI <- results$LSI
+  }
+  else{
+    LSI <- results
+  }
+  parse_LSI_answer <- function(answer, labels = NULL){
+    tmp <- unlist(lapply(strsplit(answer, ",")[[1]], as.numeric))
+    if(is.null(labels)){
+      labels <- sprintf("item%d", 1:length(tmp))
+    }
+
+    stopifnot(length(labels) == length(tmp))
+    names(tmp) <- sprintf("LSI.%s", labels)
+    tmp %>% t() %>% as_tibble()
+  }
+  reading_typical <- parse_LSI_answer(LSI$item5, labels = c("news_reading_typical",
+                                                            "comm_reading_typical",
+                                                            "non_fiction_reading_typical",
+                                                            "prose_reading_typical",
+                                                            "poetry_reading_typical"))
+  writing_typical <- parse_LSI_answer(LSI$item6, labels = c("news_writing_typical",
+                                                            "comm_writing_typical",
+                                                            "non_fiction_writing_typical",
+                                                            "prose_writing_typical",
+                                                            "poetry_writing_typical"))
+  reading_peak <- parse_LSI_answer(LSI$item7, labels = c("prose_reading_peak",
+                                                         "poetry_reading_peak"))
+  writing_peak <- parse_LSI_answer(LSI$item8, labels = c("prose_writing_peak",
+                                                         "poetry_writing_peak"))
+  tibble(
+    LSI.fav_kinds = LSI$item1,
+    LSI.pref_prose = as.numeric(LSI$item2),
+    LSI.pref_poetry = as.numeric(LSI$item3),
+    LSI.creative_writing = c("yes", "no")[as.numeric(LSI$item4)],
+  ) %>%
+    bind_cols(reading_typical, writing_typical, reading_peak, writing_peak)
 }

@@ -223,7 +223,7 @@ auto_proceed_info_page <- function(body, timeout = 1500L, admin_ui = NULL){
 
 }
 
-make_text_input_table <- function(pre_labels, post_labels, width = "20px", placeholder = NULL, style = NULL){
+make_text_input_table <- function(label, pre_labels, post_labels, width = "20px", placeholder = NULL, style = NULL){
   #browser()
   num_rows <- length(pre_labels)
   if(num_rows != length(post_labels)){
@@ -233,7 +233,7 @@ make_text_input_table <- function(pre_labels, post_labels, width = "20px", place
   rows <-
     shiny::tagList(
       lapply(1:num_rows, function(i){
-        inputID <- sprintf("text_input%d", i)
+        inputID <- sprintf("%s_text_input%d", label, i)
         #value <- restoreInput(id = inputId, default = "")
         shiny::tags$tr(
           shiny::tags$td(pre_labels[i], style = "float:left;display:block;border:0px solid black;padding:2em"),
@@ -266,10 +266,10 @@ multi_text_input_page <- function(label,
                                   admin_ui = NULL) {
   #stopifnot(is.scalar.character(label))
   num_inputs <- length(item_prompts)
-  text_inputs <- make_text_input_table(item_prompts, post_labels = post_labels)
+  text_inputs <- make_text_input_table(label = label, item_prompts, post_labels = post_labels)
   get_answer <- function(input, ...) {
     tmp <- reactiveValuesToList(input)
-    elems <- names(tmp)[grepl("text_input[0-9]+",names(tmp))]
+    elems <- sort(names(tmp)[grepl(sprintf("%s_text_input[0-9]+", label),names(tmp))])
     paste(tmp[elems], collapse = ",")
   }
   body = shiny::div(
