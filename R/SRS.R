@@ -1,5 +1,5 @@
 
-SRS_item_page <- function(item_number, item_id, num_items_in_test, item_bank, dict = mpipoet::mpipoet_dict, timeout = 30, on_complete = NULL){
+SRS_item_page <- function(item_number, item_id, num_items_in_test, item_bank, dict = mpipoet::mpipoet_dict, timeout = 10, on_complete = NULL){
   item <- item_bank[item_id,]
   #psychTestR::new_timeline(
     mpipoet:::SRS_NAFC_page(label = sprintf("q%s", item$ID),
@@ -31,7 +31,7 @@ make_correct_buttons <- function(){
   buttons
 }
 
-make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
+make_SRS_practice_page <- function(timeout = 10, page_type = "first"){
   #browser()
   practice_items <- mpipoet::SRS_item_bank %>% filter(type == "practice") %>% as.data.frame()
   correct_answer <- practice_items %>% slice(1) %>% pull(correct) %>% stringr::str_extract("[0-9]+")
@@ -102,11 +102,11 @@ make_SRS_practice_page <- function(timeout = 30, page_type = "first"){
   return(page)
 
 }
-get_SRS_practice_page <-  function() {
+get_SRS_practice_page <-  function(timeout = 10) {
   psychTestR::reactive_page(function(state, answer, ...) {
     #browser()
     practice_state <- psychTestR::get_local("practice_state", state)
-    make_SRS_practice_page(page_type = practice_state, timeout = 5)
+    make_SRS_practice_page(page_type = practice_state, timeout = timeout)
   })
 }
 
