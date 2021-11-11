@@ -141,11 +141,11 @@ SLS_scoring <- function(label){
     results <- psychTestR::get_results(state = state, complete = FALSE) %>% as.list()
     results <- results[[label]]
     if(is.null(results)){
-      warning("SRS_scoring: Found invalid results")
+      warning("SLS_scoring: Found invalid results")
       return()
     }
-
-    results <- results$SLS %>% dplyr::bind_rows() %>%
+    browser()
+    results <- results %>% dplyr::bind_rows() %>%
       mutate(total_time = cumsum(tidyr::replace_na(time,0)), cum_correct = cumsum(tidyr::replace_na(correct, 0)))
     results_red <- results %>% filter(total_time <= 3 * 60 * 1000)
     psychTestR::save_result(state, label = "perc_correct_total", value = mean(results$correct))
