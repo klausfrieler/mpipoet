@@ -348,7 +348,7 @@ ART_main_test.single_page <- function(num_items = NULL, timeout = 180, label = "
 #' the email address of this package's developer.
 #' @param dict The psychTestR dictionary used for internationalisation.
 #' @param language The language you want to run your demo in.
-#' Possible languages include English (\code{"en"}) and German (\code{"de"}).
+#' Possible languages include English (\code{"en"}) and German (informal: \code{"de"}, formal: \code{"de_f"}).
 #' The first language is selected by default
 #' @param ... Further arguments to be passed to \code{\link{ART}()}.
 #' @export
@@ -360,7 +360,7 @@ ART_demo <- function(num_items = 3L,
                      dict = mpipoet::mpipoet_dict,
                      admin_password = "demo",
                      researcher_email = "klaus.frieler@ae.mpg.de",
-                     language = c("en", "de")){
+                     language = c("en", "de", "de_f")){
   elts <- psychTestR::join(
     ART_welcome_page(dict = dict, mode = mode, timeout = timeout),
     ART(num_items = num_items, mode = mode, with_welcome = F, with_feedback = T,  with_finish =  F, timeout = timeout),
@@ -376,7 +376,7 @@ ART_demo <- function(num_items = 3L,
                                    logo_height = "auto",
                                    problems_info = "",
                                    researcher_email = "klaus.frieler@ae.mpg.de",
-                                   languages = c("de", "en"),
+                                   languages = c("de", "en", "de_f"),
                                    demo = TRUE))
 }
 
@@ -398,7 +398,7 @@ ART_demo <- function(num_items = 3L,
 #' @param languages (Character vector)
 #' Determines the languages available to participants.
 #' Possible languages include English (\code{"EN"}),
-#' and German (\code{"DE"}).
+#' and German (informal: \code{"DE"}, formal: \code{"DE_f"}).
 #' The first language is selected by default
 #' @param dict The psychTestR dictionary used for internationalisation.
 #' @param validate_id (Character scalar or closure) Function for validating IDs or string "auto" for default validation
@@ -415,7 +415,7 @@ ART_standalone  <- function(title = NULL,
                             with_feedback = TRUE,
                             admin_password = "conifer",
                             researcher_email = "klaus.frieler@ae.mpg.de",
-                            languages = c("en", "de"),
+                            languages = c("en", "de", "de_f"),
                             dict = mpipoet::mpipoet_dict,
                             validate_id = "auto",
                             ...) {

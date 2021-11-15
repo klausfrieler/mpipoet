@@ -11,7 +11,7 @@ SRS_demo(
   dict = mpipoet::mpipoet_dict,
   admin_password = "demo",
   researcher_email = "klaus.frieler@ae.mpg.de",
-  language = c("en", "de")
+  language = c("en", "de", "de_f")
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ Defaults to \email{longgold@gold.uc.ak},
 the email address of this package's developer.}
 
 \item{language}{The language you want to run your demo in.
-Possible languages include English (\code{"en"}) and German (\code{"de"}).
+Possible languages include English (\code{"en"}) and German (informal: \code{"DE"} and formal: \code{"DE_F"} ).
 The first language is selected by default}
 
 \item{...}{Further arguments to be passed to \code{\link{SRS}()}.}

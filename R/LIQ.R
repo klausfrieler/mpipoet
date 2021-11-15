@@ -38,7 +38,7 @@ LIQ <- function(label = "LIQ",
 #' @param languages (Character vector)
 #' Determines the languages available to participants.
 #' Possible languages include English (\code{"EN"}),
-#' and German (\code{"DE"}).
+#' and German (informal: \code{"DE"} and formal: \code{"DE_F"} ).
 #' The first language is selected by default
 #' @param dict The psychTestR dictionary used for internationalisation.
 #' @param validate_id (Character scalar or closure) Function for validating IDs or string "auto" for default validation
@@ -50,7 +50,7 @@ LIQ_standalone  <- function(title = NULL,
                             with_id = FALSE,
                             admin_password = "conifer",
                             researcher_email = "klaus.frieler@ae.mpg.de",
-                            languages = c("en", "de"),
+                            languages = c("en", "de", "de_f"),
                             dict = mpipoet::mpipoet_dict,
                             validate_id = "auto",
                             ...) {
@@ -118,30 +118,34 @@ LIQ_main_test <- function(label = ""){
                             labels = lapply(1:7, function(i) psychTestR::i18n(sprintf("TLIQ_0003_CHOICE%d", i))),
                             choices = as.character(1:7), button_style = "min-width:250px"),
       psychTestR::NAFC_page(label = "item4",
+                            prompt = psychTestR::i18n("TLIQ_0003_OPTION3"),
+                            labels = lapply(1:7, function(i) psychTestR::i18n(sprintf("TLIQ_0003_CHOICE%d", i))),
+                            choices = as.character(1:7), button_style = "min-width:250px"),
+      psychTestR::NAFC_page(label = "item5",
                             prompt = psychTestR::i18n("TLIQ_0004_PROMPT"),
                             labels = lapply(1:2, function(i) psychTestR::i18n(sprintf("TLIQ_0004_CHOICE%d", i))),
                             choices = as.character(1:2), button_style = "min-width:150px"),
-      multi_text_input_page(label = "item5",
+      multi_text_input_page(label = "item6",
                             prompt = psychTestR::i18n("TLIQ_0005_PROMPT"),
-                            item_prompts = lapply(1:5, function(i) psychTestR::i18n(sprintf("TLIQ_0005_OPTION%d", i))),
+                            item_prompts = lapply(1:6, function(i) psychTestR::i18n(sprintf("TLIQ_0005_OPTION%d", i))),
                             post_labels <- psychTestR::i18n("TLIQ_0005_UNIT"),
                             button_text =  psychTestR::i18n("CONTINUE"),
                             validate = validate_multi_text),
-      multi_text_input_page(label = "item6",
+      multi_text_input_page(label = "item7",
                             prompt = psychTestR::i18n("TLIQ_0006_PROMPT"),
-                            item_prompts = lapply(1:5, function(i) psychTestR::i18n(sprintf("TLIQ_0006_OPTION%d", i))),
+                            item_prompts = lapply(1:6, function(i) psychTestR::i18n(sprintf("TLIQ_0006_OPTION%d", i))),
                             post_labels <- psychTestR::i18n("TLIQ_0006_UNIT"),
                             button_text =  psychTestR::i18n("CONTINUE"),
                             validate = validate_multi_text),
-      multi_text_input_page(label = "item7",
+      multi_text_input_page(label = "item8",
                             prompt = psychTestR::i18n("TLIQ_0007_PROMPT"),
-                            item_prompts = lapply(1:2, function(i) psychTestR::i18n(sprintf("TLIQ_0007_OPTION%d", i))),
+                            item_prompts = lapply(1:3, function(i) psychTestR::i18n(sprintf("TLIQ_0007_OPTION%d", i))),
                             post_labels <- psychTestR::i18n("TLIQ_0007_UNIT"),
                             button_text =  psychTestR::i18n("CONTINUE"),
                             validate = validate_multi_text),
-      multi_text_input_page(label = "item8",
+      multi_text_input_page(label = "item9",
                             prompt = psychTestR::i18n("TLIQ_0008_PROMPT"),
-                            item_prompts = lapply(1:2, function(i) psychTestR::i18n(sprintf("TLIQ_0008_OPTION%d", i))),
+                            item_prompts = lapply(1:3, function(i) psychTestR::i18n(sprintf("TLIQ_0008_OPTION%d", i))),
                             post_labels <- psychTestR::i18n("TLIQ_0008_UNIT"),
                             button_text =  psychTestR::i18n("CONTINUE"),
                             validate = validate_multi_text)
@@ -161,7 +165,6 @@ LIQ_final_page <- function(dict = mpipoet::mpipoet_dict){
 }
 
 parse_LIQ_results <- function(results){
-  #browser()
   if("LIQ" %in% names(results)){
     LIQ <- results$LIQ
   }
@@ -178,25 +181,31 @@ parse_LIQ_results <- function(results){
     names(tmp) <- sprintf("LIQ.%s", labels)
     tmp %>% t() %>% as_tibble()
   }
-  reading_typical <- parse_LIQ_answer(LIQ$item5, labels = c("news_reading_typical",
+  reading_typical <- parse_LIQ_answer(LIQ$item6, labels = c("news_reading_typical",
                                                             "comm_reading_typical",
                                                             "non_fiction_reading_typical",
                                                             "prose_reading_typical",
-                                                            "poetry_reading_typical"))
-  writing_typical <- parse_LIQ_answer(LIQ$item6, labels = c("news_writing_typical",
+                                                            "poetry_reading_typical",
+                                                            "drama_reading_typical"))
+  writing_typical <- parse_LIQ_answer(LIQ$item7, labels = c("news_writing_typical",
                                                             "comm_writing_typical",
                                                             "non_fiction_writing_typical",
                                                             "prose_writing_typical",
-                                                            "poetry_writing_typical"))
-  reading_peak <- parse_LIQ_answer(LIQ$item7, labels = c("prose_reading_peak",
-                                                         "poetry_reading_peak"))
-  writing_peak <- parse_LIQ_answer(LIQ$item8, labels = c("prose_writing_peak",
-                                                         "poetry_writing_peak"))
+                                                            "poetry_writing_typical",
+                                                            "drama_writing_typical"))
+  reading_peak <- parse_LIQ_answer(LIQ$item8, labels = c("prose_reading_peak",
+                                                         "poetry_reading_peak",
+                                                         "drama_reading_peak"))
+  writing_peak <- parse_LIQ_answer(LIQ$item9, labels = c("prose_writing_peak",
+                                                         "poetry_writing_peak",
+                                                         "drama_writing_peak"))
+  #browser()
   tibble(
     LIQ.fav_kinds = LIQ$item1,
     LIQ.pref_prose = as.numeric(LIQ$item2),
     LIQ.pref_poetry = as.numeric(LIQ$item3),
-    LIQ.creative_writing = c("yes", "no")[as.numeric(LIQ$item4)],
+    LIQ.pref_drama = as.numeric(LIQ$item4),
+    LIQ.creative_writing = c("yes", "no")[as.numeric(LIQ$item5)],
   ) %>%
     bind_cols(reading_typical, writing_typical, reading_peak, writing_peak)
 }

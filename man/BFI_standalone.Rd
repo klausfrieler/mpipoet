@@ -9,7 +9,7 @@ BFI_standalone(languages = mpipoet::languages(), ...)
 \arguments{
 \item{languages}{(Character vector)
 Determines the languages available to participants.
-Possible languages include \code{"en"} (English), and \code{"de"} (German).
+Possible languages include \code{"en"} (English),  \code{"de"} (informal German), and \code{"de_f"} (formal German)).
 The first language is selected by default.}
 
 \item{...}{Further arguments to be passed to \code{\link{BFI_standalone}()}.}

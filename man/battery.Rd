@@ -22,7 +22,7 @@ battery(
 
 \item{languages}{(Character vector)
 Determines the languages available to participants.
-Possible languages include \code{"en"} (English), and \code{"de"} (German).
+Possible languages include \code{"en"} (English), code{"DE"} (informal German), and \code{"DE_F"} (formal German).
 The first language is selected by default.}
 
 \item{dict}{(i18n_dict) The mpipoet dictionary used for internationalisation.}

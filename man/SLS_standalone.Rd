@@ -14,7 +14,7 @@ SLS_standalone(
   num_practice_items = 10L,
   admin_password = "SLS",
   researcher_email = "klaus.frieler@ae.mpg.de",
-  languages = c("de"),
+  languages = c("de", "de_f"),
   dict = mpipoet::mpipoet_dict,
   validate_id = "auto",
   ...
@@ -42,7 +42,7 @@ at the bottom of the screen so that online participants can ask for help.}
 \item{languages}{(Character vector)
 Determines the languages available to participants.
 Possible languages include English (\code{"EN"}),
-and German (\code{"DE"}).
+and German (informal: \code{"DE"} and formal: \code{"DE_F"} )..
 The first language is selected by default}
 
 \item{dict}{The psychTestR dictionary used for internationalisation.}

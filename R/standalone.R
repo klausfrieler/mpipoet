@@ -9,7 +9,7 @@
 #'
 #' @param languages (Character vector)
 #' Determines the languages available to participants.
-#' Possible languages include \code{"en"} (English), and \code{"de"} (German).
+#' Possible languages include \code{"en"} (English), \code{"de"} (informal German), and \code{"de_f"} (formal German).
 #' The first language is selected by default.
 #'
 #' @param subscales (Character vector) The subscales to be included in the questionnaire.
@@ -107,7 +107,7 @@ standalone <- function(label,
 #'
 #' @param languages (Character vector)
 #' Determines the languages available to participants.
-#' Possible languages include \code{"en"} (English), and \code{"de"} (German).
+#' Possible languages include \code{"en"} (English),  \code{"de"} (informal German), and \code{"de_f"} (formal German).
 #' The first language is selected by default.
 #'
 #' @param ... Further arguments to be passed to \code{\link{ARA_standalone}()}.
@@ -124,7 +124,7 @@ ARA_standalone <-
 #'
 #' @param languages (Character vector)
 #' Determines the languages available to participants.
-#' Possible languages include \code{"en"} (English), and \code{"de"} (German).
+#' Possible languages include \code{"en"} (English),  \code{"de"} (informal German), and \code{"de_f"} (formal German)).
 #' The first language is selected by default.
 #'
 #' @param ... Further arguments to be passed to \code{\link{BFI_standalone}()}.
@@ -141,7 +141,7 @@ BFI_standalone <-
 #'
 #' @param languages (Character vector)
 #' Determines the languages available to participants.
-#' Possible languages include \code{"en"} (English), and \code{"de"} (German).
+#' Possible languages include \code{"en"} (English),  \code{"de"} (informal German), and \code{"de_f"} (formal German).
 #' The first language is selected by default.
 #'
 #' @param ... Further arguments to be passed to \code{\link{BFA_standalone}()}.

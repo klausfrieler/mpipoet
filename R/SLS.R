@@ -305,7 +305,7 @@ SLS_main_test <- function(num_items = NULL, label = "SLS"){
 #' the email address of this package's developer.
 #' @param dict The psychTestR dictionary used for internationalisation.
 #' @param language The language you want to run your demo in.
-#' Possible languages include English (\code{"en"}) and German (\code{"de"}).
+#' Possible languages include English (\code{"en"}) and German (informal: \code{"DE"} and formal: \code{"DE_F"} )..
 #' The first language is selected by default
 #' @param ... Further arguments to be passed to \code{\link{SLS}()}.
 #' @export
@@ -316,7 +316,7 @@ SLS_demo <- function(num_items = 3L,
                      dict = mpipoet::mpipoet_dict,
                      admin_password = "demo",
                      researcher_email = "klaus.frieler@ae.mpg.de",
-                     language = c("en", "de")){
+                     language = c("en", "de", "de_f")){
   elts <- psychTestR::join(
     SLS_welcome_page(dict = dict),
     SLS(num_items = num_items, with_welcome = F, with_feedback = T, with_training = T, with_finish =  F, timeout = timeout),
@@ -332,7 +332,7 @@ SLS_demo <- function(num_items = 3L,
                                    logo_height = "auto",
                                    problems_info = "",
                                    researcher_email = "klaus.frieler@ae.mpg.de",
-                                   languages = c("de"),
+                                   languages = c("de", "de_f"),
                                    demo = TRUE))
 }
 
@@ -354,7 +354,7 @@ SLS_demo <- function(num_items = 3L,
 #' @param languages (Character vector)
 #' Determines the languages available to participants.
 #' Possible languages include English (\code{"EN"}),
-#' and German (\code{"DE"}).
+#' and German (informal: \code{"DE"} and formal: \code{"DE_F"} )..
 #' The first language is selected by default
 #' @param dict The psychTestR dictionary used for internationalisation.
 #' @param validate_id (Character scalar or closure) Function for validating IDs or string "auto" for default validation
@@ -371,7 +371,7 @@ SLS_standalone  <- function(title = NULL,
                             num_practice_items = 10L,
                             admin_password = "SLS",
                             researcher_email = "klaus.frieler@ae.mpg.de",
-                            languages = c("de"),
+                            languages = c("de", "de_f"),
                             dict = mpipoet::mpipoet_dict,
                             validate_id = "auto",
                             ...) {

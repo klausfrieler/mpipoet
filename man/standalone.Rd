@@ -22,7 +22,7 @@ standalone(
 
 \item{languages}{(Character vector)
 Determines the languages available to participants.
-Possible languages include \code{"en"} (English), and \code{"de"} (German).
+Possible languages include \code{"en"} (English), \code{"de"} (informal German), and \code{"de_f"} (formal German).
 The first language is selected by default.}
 
 \item{subscales}{(Character vector) The subscales to be included in the questionnaire.
