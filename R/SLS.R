@@ -178,7 +178,7 @@ SLS_clear_page <- function(dict = mpipoet::mpipoet_dict){
     no_button_page(
       body = shiny::div(
         shiny::h4(psychTestR::i18n("YOU_FINISHED", sub = list(test_name = psychTestR::i18n("SLS_TESTNAME")))),
-        shiny::tags$script("window.onkeypress = null;")
+        shiny::tags$script("window.onkeypress = null;console.log('Removed keypress event listener');window.onkeypress = null;")
       ),
       button_text = psychTestR::i18n("SLS_KEY_CONTINUE")
     ), dict = dict)
@@ -191,7 +191,7 @@ SLS_final_page <- function(dict = mpipoet::mpipoet_dict){
         shiny::h4(psychTestR::i18n("THANK_YOU")),
         shiny::div(psychTestR::i18n("CLOSE_BROWSER"),
                    style = "margin-left:0%;display:block"),
-        shiny::tags$script("window.onkeypress = null;")
+        shiny::tags$script("window.onkeypress = null;console.log('Removed keypress listener');window.onkeypress = null;")
       )
     ), dict = dict)
 }
