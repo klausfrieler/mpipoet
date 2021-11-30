@@ -177,7 +177,7 @@ ART_clear_page <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
     psychTestR::one_button_page(
       body = shiny::div(
-        shiny::h4(psychTestR::i18n("YOU_FINISHED", sub = list(test_name = psychTestR::i18n("ART_TESTNAME")))),
+        shiny::h4(psychTestR::i18n("ART_FINISHED")),
         shiny::tags$script("can_advance = false;if(myTimer)window.clearTimeout(myTimer);console.log('ART: Cleared timeout');")
       ),
       button_text = psychTestR::i18n("CONTINUE")

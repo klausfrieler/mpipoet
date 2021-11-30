@@ -108,7 +108,15 @@ LIQ_main_test <- function(label = ""){
       psychTestR::text_input_page("item1",
                                   prompt = psychTestR::i18n("TLIQ_0002_PROMPT"),
                                   one_line = FALSE,
-                                  save_answer = T),
+                                  save_answer = T,
+                                  validate = function(answer, ...) {
+                                    if(is.null(answer) || nchar(answer) == 0)
+                                      psychTestR::i18n("ENTER_ANSWER")
+                                    else
+                                      TRUE
+                                    },
+
+                                  button_text = psychTestR::i18n("CONTINUE")),
       psychTestR::NAFC_page(label = "item2",
                             prompt = psychTestR::i18n("TLIQ_0003_OPTION1"),
                             labels = lapply(1:7, function(i) psychTestR::i18n(sprintf("TLIQ_0003_CHOICE%d", i))),
