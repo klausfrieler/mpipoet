@@ -302,7 +302,7 @@ SRS_main_test <- function(num_items = NULL, timeout = 10, label = "SRS" ){
       item_sequence <- psychTestR::get_local("item_sequence", state)
       item_number <- psychTestR::get_local("item_number", state)
       item_id <- item_sequence[item_number]
-      messagef("Called reactive page, item_number %d, item_no: %d", item_number, item_id)
+      #messagef("Called reactive page, item_number %d, item_no: %d", item_number, item_id)
       SRS_item_page(item_number, item_id, num_items, item_bank, dict = dict, timeout = timeout)
       })
     elts <- c(elts,item)

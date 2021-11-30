@@ -8,9 +8,11 @@ SLS_NAFC_page <- function(label, prompt,
                           ...) {
   stopifnot(is.scalar.character(label))
   key_map <- c("102" = "f", "106" = "k")
+
   ui <- shiny::div(
     prompt,
     make_ui_NAFC_with_keys(id = response_ui_id))
+
   get_answer <- function(state, input, ...) {
     #messagef("Set item number: %d", item_number + 1L)
     answer <- input$marker_seq
@@ -41,12 +43,9 @@ SLS_item_page <- function(item_number, num_items_in_test, item_bank, training = 
   mpipoet:::SLS_NAFC_page(label = sprintf("q%s", item_number),
                           item_num = item_number,
                           prompt = shiny::div(
-                            # shiny::h4(psychTestR::i18n(PAGE_HEADER,
-                            #                            sub = list(page_no = item_number,
-                            #                                       num_pages = num_items_in_test))),
                             if(item_number == 1)shiny::tags$script("var myTimer = false;"),
                             tagify_with_line_breaks(item_bank[item_bank$item_id == item_number,]$sentence,
-                                                    style = "font-size:large;text-align:justify;margin:auto;width:30em"),
+                                                    style = "font-size:large;text-align:justify;margin:auto;width:30em;border:solid 0px black"),
                             style = "width:100%;height:200px"),
                           correct = item_bank[item_number,]$correct,
                           save_answer = !training,
@@ -272,7 +271,14 @@ SLS_main_test <- function(num_items = NULL, label = "SLS"){
   }
   num_items <- min(num_items, nrow(item_bank))
   elts <- c()
-  cross_hair_page <- auto_proceed_info_page(body = shiny::h1("+", style = "text-align:center"), timeout = 1500L )
+  cross_hair_page <- auto_proceed_info_page(body =
+                                              #shiny::h1("+", style = "text-align:justify;margin:auto;width:30em"),
+                                              shiny::div(
+                                                tagify_with_line_breaks("                  +",
+                                                                        style = "font-size:large;text-align:center;margin:auto;width:30em;border:solid 0px black"),
+                                                ),
+                                            style = "width:100%;height:200px",
+                                            timeout = 1500L )
   for(item_number in 1:num_items){
 
     #printf("Created item with %s, %d", correct_answer, nchar(correct_answer))

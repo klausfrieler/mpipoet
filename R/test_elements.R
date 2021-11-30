@@ -204,7 +204,7 @@ no_button_page <-function(body, button_text, admin_ui = NULL){
     psychTestR::page(ui = body, admin_ui = admin_ui, final = FALSE)
 }
 
-auto_proceed_info_page <- function(body, timeout = 1500L, admin_ui = NULL){
+auto_proceed_info_page <- function(body, timeout = 1500L, style = "height:200px", admin_ui = NULL){
   timer_script <- sprintf("var myTimer = true;
                           can_advance = true;
                           if(myTimer)window.clearTimeout(myTimer);
@@ -217,7 +217,7 @@ auto_proceed_info_page <- function(body, timeout = 1500L, admin_ui = NULL){
     shiny::tags$div(
       tagify(body),
       shiny::tags$script(shiny::HTML(timer_script)),
-      style = "height:181px"
+      style = style
     )
   psychTestR::page(ui = body, admin_ui = admin_ui, final = FALSE)
 
