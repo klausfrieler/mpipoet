@@ -155,7 +155,6 @@ SLS_scoring <- function(label){
     psychTestR::save_result(state, label = "num_correct", value = sum(results_red$correct))
     psychTestR::save_result(state, label = "total_time", value = max(results$total_time))
   })
-
 }
 
 SLS_welcome_page <- function(dict = mpipoet::mpipoet_dict){
