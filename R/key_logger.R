@@ -49,8 +49,11 @@ function shiny_next(e) {
     //console.log('Invalid key')
   //  return
   //}
+  window.onkeypress = null;
+  console.log('KPS: removed keypress event listener')
   Shiny.onInputChange('next_page', performance.now())
 }
+alter(window.onkeypress)
 "
 
 clean_up_script <- "

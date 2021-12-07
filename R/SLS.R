@@ -95,8 +95,8 @@ make_SLS_practice_page <- function(item, num_practice_items, item_bank){
         psychTestR::set_local("practice_item_counter", practice_item_counter + 1, state)
       })
   )
-
 }
+
 SLS_practice <- function(num_practice_items = 10L, item_bank = mpipoet::SLS_item_bank, dict = mpipoet::mpipoet_dict){
   num_practice_items <- max(1, min(num_practice_items, 10L))
   practice_items <- item_bank %>% filter(type == "Practice") %>%
@@ -173,12 +173,12 @@ SLS_welcome_page <- function(dict = mpipoet::mpipoet_dict){
 
 SLS_clear_page <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
-    no_button_page(
+    one_button_page(
       body = shiny::div(
         shiny::p(psychTestR::i18n("YOU_FINISHED", sub = list(test_name = psychTestR::i18n("SLS_TESTNAME")))),
-        shiny::tags$script("window.onkeypress = null;console.log('Removed keypress event listener');window.onkeypress = null;")
+        shiny::tags$script("window.onkeypress = null;console.log('SLS clear_page: Removed keypress event listener');window.onkeypress = null;")
       ),
-      button_text = psychTestR::i18n("SLS_KEY_CONTINUE")
+      button_text = psychTestR::i18n("CONTINUE")
     ), dict = dict)
 }
 
@@ -189,7 +189,7 @@ SLS_final_page <- function(dict = mpipoet::mpipoet_dict){
         shiny::h4(psychTestR::i18n("THANK_YOU")),
         shiny::div(psychTestR::i18n("CLOSE_BROWSER"),
                    style = "margin-left:0%;display:block"),
-        shiny::tags$script("window.onkeypress = null;console.log('Removed keypress listener');window.onkeypress = null;")
+        shiny::tags$script("window.onkeypress = null;console.log('SLS final_page Removed keypress listener');window.onkeypress = null;")
       )
     ), dict = dict)
 }

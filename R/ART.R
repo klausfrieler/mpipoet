@@ -91,7 +91,7 @@ ART_item_page2 <- function(num_items = nrow(mpipoet::ART_item_bank),
 
   labels <- items %>% pull(name)
   choices <- sprintf("%s:%s", items %>% pull(role), labels)
-  timer_script <- sprintf("var myTimer = true;can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer: ' + %d + 's');", timeout * 1000, timeout)
+  timer_script <- sprintf("var myTimer;can_advance = true;if(myTimer)window.clearTimeout(myTimer);myTimer = window.setTimeout(function(){if(can_advance){Shiny.onInputChange('next_page', performance.now());console.log('TIMEOUT')}}, %d);console.log('Set timer: ' + %d + 's');", timeout * 1000, timeout)
   psychTestR::join(
     psychTestR::code_block(function(state, ...){
       psychTestR::save_result(state, label = "items", value = paste(sprintf("%s:%s", items$role, items$name), collapse = ", "))
@@ -178,7 +178,7 @@ ART_clear_page <- function(dict = mpipoet::mpipoet_dict){
     psychTestR::one_button_page(
       body = shiny::div(
         shiny::h4(psychTestR::i18n("ART_FINISHED")),
-        shiny::tags$script("can_advance = false;if(myTimer)window.clearTimeout(myTimer);console.log('ART: Cleared timeout');")
+        shiny::tags$script("can_advance = false;if(myTimer){window.clearTimeout(myTimer);console.log('ART: Cleared timeout')};")
       ),
       button_text = psychTestR::i18n("CONTINUE")
     ), dict = dict)
@@ -191,7 +191,7 @@ ART_final_page <- function(dict = mpipoet::mpipoet_dict){
         shiny::h4(psychTestR::i18n("THANK_YOU")),
         shiny::div(psychTestR::i18n("CLOSE_BROWSER"),
                    style = "margin-left:0%;display:block"),
-        shiny::tags$script("can_advance = false;if(myTimer)window.clearTimeout(myTimer);console.log('ART: Cleared timeout');")
+        shiny::tags$script("can_advance = false;if(myTimer){window.clearTimeout(myTimer);console.log('ART: Cleared timeout')};")
       )
     ), dict = dict)
 }
