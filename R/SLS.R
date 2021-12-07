@@ -265,7 +265,7 @@ SLS <- function(num_items = NULL,
 SLS_main_test <- function(num_items = NULL, label = "SLS"){
 
   item_bank <- mpipoet::SLS_item_bank %>% filter(type == "Test")
-  if(is.null(num_items)){
+  if(is.null(num_items) || is.na(num_items) || num_items <= 0L){
     num_items <- nrow(item_bank)
   }
   num_items <- min(num_items, nrow(item_bank))
