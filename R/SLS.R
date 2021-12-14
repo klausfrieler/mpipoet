@@ -57,6 +57,15 @@ SLS_item_page <- function(item_number, num_items_in_test, item_bank, training = 
 
 
 get_SLS_practice_page <-  function(practice_items = NULL, num_practice_items, item_bank) {
+  cross_hair_page <- auto_proceed_info_page(body =
+                                              #shiny::h1("+", style = "text-align:justify;margin:auto;width:30em"),
+                                              shiny::div(
+                                                tagify_with_line_breaks("                  +",
+                                                                        style = "font-size:large;text-align:center;margin:auto;width:30em;border:solid 0px black"),
+                                              ),
+                                            style = "width:100%;height:200px",
+                                            timeout = 1500L )
+
   psychTestR::join(
     psychTestR::reactive_page(function(state, answer, ...) {
       #browser()
@@ -65,35 +74,23 @@ get_SLS_practice_page <-  function(practice_items = NULL, num_practice_items, it
         correct <- psychTestR::get_local("last_result", state)
         FEEDBACK <- ifelse(!is.null(correct) && !is.na(correct) && correct , "SLS_EXAMPLE_FEEDBACK_CORRECT", "SLS_EXAMPLE_FEEDBACK_INCORRECT")
         auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"), timeout = 1000L)
-        # no_button_page(body = shiny::p(psychTestR::i18n(FEEDBACK)),
-        #                button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
       }
       else{
         no_button_page(body = shiny::p(psychTestR::i18n("SLS_INSTRUCTIONS3"), style = "margin-left:30%;text-align:justify"),
                        button_text = psychTestR::i18n("SLS_KEY_CONTINUE"))
       }
     }),
+    cross_hair_page,
     psychTestR::reactive_page(function(state, answer, ...) {
       practice_item_counter <- psychTestR::get_local("practice_item_counter", state)
       SLS_item_page(practice_items[practice_item_counter,]$item_id, num_practice_items, item_bank, training = T)
-  }),
-  psychTestR::code_block(function(state, ...) {
-    #browser()
-    practice_item_counter <- psychTestR::get_local("practice_item_counter", state)
-    psychTestR::set_local("practice_item_counter", practice_item_counter + 1, state)
-  })
+      }),
+    psychTestR::code_block(function(state, ...) {
+      #browser()
+      practice_item_counter <- psychTestR::get_local("practice_item_counter", state)
+      psychTestR::set_local("practice_item_counter", practice_item_counter + 1, state)
+    })
 
-  )
-}
-
-make_SLS_practice_page <- function(item, num_practice_items, item_bank){
-  psychTestR::join(
-      SLS_item_page(item$item_id, num_practice_items, item_bank, training = T),
-      psychTestR::code_block(function(state, ...) {
-        #browser()
-        practice_item_counter <- psychTestR::get_local("practice_item_counter", state)
-        psychTestR::set_local("practice_item_counter", practice_item_counter + 1, state)
-      })
   )
 }
 
