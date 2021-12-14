@@ -308,7 +308,7 @@ ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10, label 
       item_sequence <- psychTestR::get_local("item_sequence", state)
       item_number <- psychTestR::get_local("item_number", state)
       item <- item_sequence[item_number,]
-      messagef("Called reactive page, item_number %d", item_number)
+      #messagef("Called reactive page, item_number %d", item_number)
       ART_item_page(item_number, item, num_items, dict = dict, timeout = timeout, mode = mode)
     })
     elts <- c(elts,item)
