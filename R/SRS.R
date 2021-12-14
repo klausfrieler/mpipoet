@@ -98,7 +98,7 @@ make_SRS_practice_page <- function(timeout = 10, page_type = "first"){
   else{
     stop(sprintf("Page type '%s' should not happen", page_type))
   }
-  messagef("Made practice page of type '%s'", page_type)
+  #messagef("Made practice page of type '%s'", page_type)
   return(page)
 
 }
@@ -119,7 +119,7 @@ SRS_practice <- function(dict = mpipoet::mpipoet_dict, timeout = 10){
       psychTestR::while_loop(
         test = function(state, ...){
           practice_state <- psychTestR::get_local("practice_state", state)
-          messagef("practice_state: %s", practice_state)
+          #messagef("practice_state: %s", practice_state)
           practice_state != "continue"
 
         } ,
@@ -286,7 +286,7 @@ SRS_main_test <- function(num_items = NULL, timeout = 10, label = "SRS" ){
       charToRaw() %>%
       as.integer() %>%
       sum()
-    messagef("Code block, seed %d", seed)
+    #messagef("Code block, seed %d", seed)
     item_sequence <- get_SRS_item_sequence(num_items, seed)
     #print(item_sequence)
     psychTestR::set_local(key = "item_sequence", value = item_sequence[1:num_items], state = state)

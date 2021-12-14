@@ -292,7 +292,7 @@ ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10, label 
       charToRaw() %>%
       as.integer() %>%
       sum()
-    messagef("Code block, seed %d", seed)
+    #messagef("Code block, seed %d", seed)
     item_sequence <- get_ART_item_sequence(num_items, seed, mode = mode)
     #print(item_sequence)
     psychTestR::set_local(key = "item_sequence", value = item_sequence, state = state)
