@@ -278,7 +278,7 @@ ART <- function(num_items = NULL,
 ART_main_test <- function(num_items = NULL, mode = "pairs", timeout = 10, label = "ART"){
   #browser()
   #item_bank <- mpipoet::ART_item_bank %>% filter(mode == "test")
-  if(is.null(num_items)){
+  if(is.null(num_items) || is.na(num_items) || (num_items <= 0 || num_items > 65)){
     num_items <- nrow(mpipoet::ART_item_bank)
     if(mode == "pairs"){
       num_items <- min(nrow(mpipoet::ART_item_bank %>% filter(role != "foil")),
