@@ -9,14 +9,15 @@
 #' For a standalone implementation of the LIQ,
 #' consider using \code{\link{LIQ_standalone}()}.
 #' @param label (Character scalar) Label to give the LIQ results in the output file.
+#' @param with_intro (Logical scalar) Flag whether to show intro page or not.
+#' @param with_finish (Logical scalar) Flag whether to show final page or not.
 #' @param dict The psychTestR dictionary used for internationalisation.
 #' @export
 #'
 LIQ <- function(label = "LIQ",
                 with_intro = TRUE,
                 with_finish = FALSE,
-                dict = mpipoet::mpipoet_dict,
-                ...){
+                dict = mpipoet::mpipoet_dict){
   psychTestR::join(
     psychTestR::begin_module(label),
     psychTestR::new_timeline(
@@ -188,7 +189,7 @@ parse_LIQ_results <- function(results){
 
     stopifnot(length(labels) == length(tmp))
     names(tmp) <- sprintf("LIQ.%s", labels)
-    tmp %>% t() %>% as_tibble()
+    tmp %>% t() %>% tibble::as_tibble()
   }
   reading_typical <- parse_LIQ_answer(LIQ$item6, labels = c("news_reading_typical",
                                                             "comm_reading_typical",
@@ -216,5 +217,5 @@ parse_LIQ_results <- function(results){
     LIQ.pref_drama = as.numeric(LIQ$item4),
     LIQ.creative_writing = c("yes", "no")[as.numeric(LIQ$item5)],
   ) %>%
-    bind_cols(reading_typical, writing_typical, reading_peak, writing_peak)
+    dplyr::bind_cols(reading_typical, writing_typical, reading_peak, writing_peak)
 }

@@ -12,6 +12,12 @@ NULL
 #' @docType data
 NULL
 
+#' SLS item bank
+#'
+#' The SLS item bank
+#' @name SLS_item_bank
+#' @docType data
+NULL
 
 #' ART item bank
 #'

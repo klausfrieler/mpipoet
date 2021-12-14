@@ -2,18 +2,18 @@
 SRS_item_page <- function(item_number, item_id, num_items_in_test, item_bank, dict = mpipoet::mpipoet_dict, timeout = 10, on_complete = NULL){
   item <- item_bank[item_id,]
   #psychTestR::new_timeline(
-    mpipoet:::SRS_NAFC_page(label = sprintf("q%s", item$ID),
-                  prompt = shiny::div(
-                    shiny::h4(psychTestR::i18n("PAGE_HEADER",
-                                               sub = list(num_question = item_number,
-                                                          test_length = num_items_in_test))),
-                    if(item_id == 1)shiny::tags$script("var myTimer = false;"),
-                    shiny::p(psychTestR::i18n("SRS_PROMPT", sub = list(time_out = as.character(timeout))))),
-                  choices = as.character(1:5),
-                  labels = c(item %>% dplyr::select(starts_with("item"))  %>% as.data.frame() %>% as.vector(), psychTestR::i18n("SRS_ALL_EQUAL")),
-                  timeout = timeout,
-                  save_answer = T,
-                  on_complete = on_complete
+  SRS_NAFC_page(label = sprintf("q%s", item$ID),
+                prompt = shiny::div(
+                  shiny::h4(psychTestR::i18n("PAGE_HEADER",
+                                             sub = list(num_question = item_number,
+                                                        test_length = num_items_in_test))),
+                  if(item_id == 1)shiny::tags$script("var myTimer = false;"),
+                  shiny::p(psychTestR::i18n("SRS_PROMPT", sub = list(time_out = as.character(timeout))))),
+                choices = as.character(1:5),
+                labels = c(item %>% dplyr::select(starts_with("item"))  %>% as.data.frame() %>% as.vector(), psychTestR::i18n("SRS_ALL_EQUAL")),
+                timeout = timeout,
+                save_answer = T,
+                on_complete = on_complete
                 )
     #, dict = dict)
 }
@@ -241,7 +241,7 @@ SRS <- function(num_items = NULL,
     if (with_welcome) SRS_welcome_page(),
     if (with_training) SRS_practice(dict = dict, timeout = timeout),
     psychTestR::new_timeline(
-      SRS_main_test(num_items = num_items, label = label),
+      SRS_main_test(num_items = num_items, label = label, timeout = timeout),
       dict = dict),
     if(with_feedback) SRS_feedback_with_score(dict = dict),
     psychTestR::elt_save_results_to_disk(complete = TRUE),

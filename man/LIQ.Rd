@@ -4,10 +4,19 @@
 \alias{LIQ}
 \title{LIQ}
 \usage{
-LIQ(label = "LIQ", with_finish = FALSE, dict = mpipoet::mpipoet_dict, ...)
+LIQ(
+  label = "LIQ",
+  with_intro = TRUE,
+  with_finish = FALSE,
+  dict = mpipoet::mpipoet_dict
+)
 }
 \arguments{
 \item{label}{(Character scalar) Label to give the LIQ results in the output file.}
+
+\item{with_intro}{(Logical scalar) Flag whether to show intro page or not.}
+
+\item{with_finish}{(Logical scalar) Flag whether to show final page or not.}
 
 \item{dict}{The psychTestR dictionary used for internationalisation.}
 }

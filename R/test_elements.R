@@ -268,7 +268,7 @@ multi_text_input_page <- function(label,
   num_inputs <- length(item_prompts)
   text_inputs <- make_text_input_table(label = label, item_prompts, post_labels = post_labels)
   get_answer <- function(input, ...) {
-    tmp <- reactiveValuesToList(input)
+    tmp <- shiny::reactiveValuesToList(input)
     elems <- sort(names(tmp)[grepl(sprintf("%s_text_input[0-9]+", label),names(tmp))])
     paste(tmp[elems], collapse = ",")
   }

@@ -34,7 +34,7 @@ read_item_banks <- function(){
   })
   mpipoet_item_bank <-
     mpipoet_item_bank %>%
-    as_tibble() %>%
+    tibble::as_tibble() %>%
     filter(str_detect(language, "en"), str_detect(score_func, "", negate = FALSE)) %>%
     select(prompt_id = main_id, option_type = template, score_func, subscales, layout) %>%
     mutate(subscales = map_chr(strsplit(subscales, ":"), ~{.x[1]}))

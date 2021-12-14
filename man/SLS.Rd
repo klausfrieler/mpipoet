@@ -31,9 +31,9 @@ SLS(
 
 \item{dict}{The psychTestR dictionary used for internationalisation.}
 
-\item{...}{Further arguments to be passed to \code{SLS_main_test()}.}
+\item{num_practice_items}{(Scalar integer) Number of practice items to be adminstered.}
 
-\item{timeout}{(Double scalar) The time to answer (in seconds)}
+\item{...}{Further arguments to be passed to \code{SLS_main_test()}.}
 }
 \description{
 This function defines a SLS  module for incorporation into a

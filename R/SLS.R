@@ -40,16 +40,16 @@ SLS_item_page <- function(item_number, num_items_in_test, item_bank, training = 
     PAGE_HEADER <- "SLS_EXAMPLE_PAGE_HEADER"
     #browser()
   }
-  mpipoet:::SLS_NAFC_page(label = sprintf("q%s", item_number),
-                          item_num = item_number,
-                          prompt = shiny::div(
-                            if(item_number == 1)shiny::tags$script("var myTimer = false;"),
-                            tagify_with_line_breaks(item_bank[item_bank$item_id == item_number,]$sentence,
-                                                    style = "font-size:large;text-align:justify;margin:auto;width:30em;border:solid 0px black"),
-                            style = "width:100%;height:200px"),
-                          correct = item_bank[item_number,]$correct,
-                          save_answer = !training,
-                          on_complete = NULL
+  SLS_NAFC_page(label = sprintf("q%s", item_number),
+                item_num = item_number,
+                prompt = shiny::div(
+                  if(item_number == 1)shiny::tags$script("var myTimer = false;"),
+                  tagify_with_line_breaks(item_bank[item_bank$item_id == item_number,]$sentence,
+                                          style = "font-size:large;text-align:justify;margin:auto;width:30em;border:solid 0px black"),
+                  style = "width:100%;height:200px"),
+                correct = item_bank[item_number,]$correct,
+                save_answer = !training,
+                on_complete = NULL
   )
   #, dict = dict)
 }
@@ -73,7 +73,8 @@ get_SLS_practice_page <-  function(practice_items = NULL, num_practice_items, it
       if(practice_item_counter > 1){
         correct <- psychTestR::get_local("last_result", state)
         FEEDBACK <- ifelse(!is.null(correct) && !is.na(correct) && correct , "SLS_EXAMPLE_FEEDBACK_CORRECT", "SLS_EXAMPLE_FEEDBACK_INCORRECT")
-        auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"), timeout = 1000L)
+        auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"),
+                               timeout = 1000L)
       }
       else{
         no_button_page(body = shiny::p(psychTestR::i18n("SLS_INSTRUCTIONS3"), style = "margin-left:30%;text-align:justify"),
@@ -117,7 +118,8 @@ SLS_practice <- function(num_practice_items = 10L, item_bank = mpipoet::SLS_item
       psychTestR::reactive_page(function(state, ...){
         correct <- psychTestR::get_local("last_result", state)
         FEEDBACK <- ifelse(correct, "SLS_EXAMPLE_FEEDBACK_CORRECT", "SLS_EXAMPLE_FEEDBACK_INCORRECT")
-        auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"), timeout = 1000L)
+        auto_proceed_info_page(body = shiny::p(psychTestR::i18n(FEEDBACK), style = "font-size:large;font-weight:bold"),
+                               timeout = 1000L)
 
         # no_button_page(body = shiny::div(
         #   shiny::p(psychTestR::i18n(FEEDBACK)),
@@ -170,7 +172,7 @@ SLS_welcome_page <- function(dict = mpipoet::mpipoet_dict){
 
 SLS_clear_page <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
-    one_button_page(
+    psychTestR::one_button_page(
       body = shiny::div(
         shiny::p(psychTestR::i18n("YOU_FINISHED", sub = list(test_name = psychTestR::i18n("SLS_TESTNAME")))),
         shiny::tags$script("window.onkeypress = null;console.log('SLS clear_page: Removed keypress event listener');window.onkeypress = null;")
@@ -226,7 +228,7 @@ SLS_feedback_with_score <- function(dict = mpipoet::mpipoet_dict){
 #' @param with_feedback (Logical scalar) Whether to include feedback to the participants.
 #' @param label (Character scalar) Label to give the SLS results in the output file.
 #' @param dict The psychTestR dictionary used for internationalisation.
-#' @param timeout (Double scalar) The time to answer (in seconds)
+#' @param num_practice_items (Scalar integer) Number of practice items to be adminstered.
 #' @param ... Further arguments to be passed to \code{SLS_main_test()}.
 #' @export
 #'
@@ -276,7 +278,6 @@ SLS_main_test <- function(num_items = NULL, label = "SLS"){
                                             style = "width:100%;height:200px",
                                             timeout = 1500L )
   for(item_number in 1:num_items){
-
     #printf("Created item with %s, %d", correct_answer, nchar(correct_answer))
     #browser()
     item <- SLS_item_page(item_number, num_items, item_bank)
@@ -296,7 +297,6 @@ SLS_main_test <- function(num_items = NULL, label = "SLS"){
 #' This function launches a demo for the SLS
 #'
 #' @param num_items (Integer scalar) Number of items in the test.
-#' @param timeout (Double scalar) The time to answer (in seconds)
 #' @param title (Character scalar) The title
 #' @param admin_password (Scalar character) Password for accessing the admin panel.
 #' Defaults to \code{"demo"}.
@@ -313,7 +313,6 @@ SLS_main_test <- function(num_items = NULL, label = "SLS"){
 #' @export
 #'
 SLS_demo <- function(num_items = 3L,
-                     timeout = 10,
                      title = "SLS Demo",
                      dict = mpipoet::mpipoet_dict,
                      admin_password = "demo",
@@ -321,7 +320,11 @@ SLS_demo <- function(num_items = 3L,
                      language = c("en", "de", "de_f")){
   elts <- psychTestR::join(
     SLS_welcome_page(dict = dict),
-    SLS(num_items = num_items, with_welcome = F, with_feedback = T, with_training = T, with_finish =  F, timeout = timeout),
+    SLS(num_items = num_items,
+        with_welcome = F,
+        with_feedback = T,
+        with_training = T,
+        with_finish =  F),
     SLS_final_page(dict = dict)
   )
 
@@ -344,11 +347,11 @@ SLS_demo <- function(num_items = 3L,
 #' This can be used for data collection, either in the laboratory or online.
 #' @param title (Scalar character) Title to display during testing.
 #' @param num_items (Scalar integer) Number of items to be adminstered.
-#' @param timeout (Double scalar) The time to answer (in seconds)
 #' @param with_id (Logical scalar) Whether to show a ID page.
 #' @param with_welcome (Logical scalar) Whether to show a welcome page.
 #' @param with_training (Logical scalar) Whether to include the training phase.
 #' @param with_feedback (Logical scalar) Whether to include feedback to the participants.
+#' @param num_practice_items (Scalar integer) Number of practice items to be adminstered.
 #' @param admin_password (Scalar character) Password for accessing the admin panel.
 #' @param researcher_email (Scalar character)
 #' If not \code{NULL}, this researcher's email address is displayed

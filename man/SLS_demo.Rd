@@ -6,7 +6,6 @@
 \usage{
 SLS_demo(
   num_items = 3L,
-  timeout = 10,
   title = "SLS Demo",
   dict = mpipoet::mpipoet_dict,
   admin_password = "demo",
@@ -16,8 +15,6 @@ SLS_demo(
 }
 \arguments{
 \item{num_items}{(Integer scalar) Number of items in the test.}
-
-\item{timeout}{(Double scalar) The time to answer (in seconds)}
 
 \item{title}{(Character scalar) The title}
 

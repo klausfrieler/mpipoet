@@ -34,6 +34,18 @@ NULL
 #' @importFrom dplyr "arrange"
 NULL
 
+#' @importFrom dplyr "bind_cols"
+NULL
+
+#' @importFrom dplyr "bind_rows"
+NULL
+
+#' @importFrom tidyselect "starts_with"
+NULL
+
+#' @importFrom tidyr "replace_na"
+NULL
+
 #' @importFrom tibble "tibble"
 NULL
 

@@ -33,6 +33,8 @@ SLS_standalone(
 
 \item{with_feedback}{(Logical scalar) Whether to include feedback to the participants.}
 
+\item{num_practice_items}{(Scalar integer) Number of practice items to be adminstered.}
+
 \item{admin_password}{(Scalar character) Password for accessing the admin panel.}
 
 \item{researcher_email}{(Scalar character)
@@ -51,8 +53,6 @@ The first language is selected by default}
 which means ID should consist only of  alphanumeric characters.}
 
 \item{...}{Further arguments to be passed to \code{\link{SLS}()}.}
-
-\item{timeout}{(Double scalar) The time to answer (in seconds)}
 }
 \description{
 This function launches a standalone testing session for the SLS
