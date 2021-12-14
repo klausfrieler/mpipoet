@@ -13,13 +13,14 @@
 #' @export
 #'
 LIQ <- function(label = "LIQ",
+                with_intro = TRUE,
                 with_finish = FALSE,
                 dict = mpipoet::mpipoet_dict,
                 ...){
   psychTestR::join(
     psychTestR::begin_module(label),
     psychTestR::new_timeline(
-      LIQ_main_test(label = label),
+      LIQ_main_test(label = label, with_intro = with_intro),
       dict = dict),
     if(with_finish) LIQ_final_page(),
     psychTestR::end_module())
@@ -95,9 +96,9 @@ validate_multi_text <- function(answer, ...){
   length(elems) == sum(unlist(tmp))
 }
 
-LIQ_main_test <- function(label = ""){
+LIQ_main_test <- function(label = "", with_intro = T){
     psychTestR::join(
-      psychTestR::one_button_page(
+      if(with_intro) psychTestR::one_button_page(
         body = shiny::div(
           shiny::h4(psychTestR::i18n("TLIQ_0000_PROMPT")),
           shiny::div(psychTestR::i18n("TLIQ_0001_PROMPT"),
