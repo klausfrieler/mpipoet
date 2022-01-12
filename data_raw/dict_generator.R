@@ -16,3 +16,4 @@ mpipoet_dict_raw <-
 mpipoet_dict <- psychTestR::i18n_dict$new(mpipoet_dict_raw)
 
 usethis::use_data(mpipoet_dict, overwrite = TRUE)
+

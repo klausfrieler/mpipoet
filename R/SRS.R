@@ -155,12 +155,12 @@ SRS_scoring <- function(label){
 
 }
 
-SRS_welcome_page <- function(dict = mpipoet::mpipoet_dict){
+SRS_welcome_page <- function(dict = mpipoet::mpipoet_dict, timeout = 20){
   psychTestR::new_timeline(
     psychTestR::one_button_page(
       body = shiny::div(
         shiny::h4(psychTestR::i18n("SRS_WELCOME")),
-        shiny::div(psychTestR::i18n("SRS_INSTRUCTIONS"),
+        shiny::div(psychTestR::i18n("SRS_INSTRUCTIONS", sub = list(time_out = timeout)),
                    style = "margin-left:0%;width:50%;min-width:400px;text-align:justify;margin-bottom:30px")
       ),
       button_text = psychTestR::i18n("CONTINUE")
@@ -238,7 +238,7 @@ SRS <- function(num_items = NULL,
                 ...){
   psychTestR::join(
     psychTestR::begin_module(label),
-    if (with_welcome) SRS_welcome_page(),
+    if (with_welcome) SRS_welcome_page(timeout = timeout),
     if (with_training) SRS_practice(dict = dict, timeout = timeout),
     psychTestR::new_timeline(
       SRS_main_test(num_items = num_items, label = label, timeout = timeout),
@@ -345,7 +345,7 @@ SRS_demo <- function(num_items = 3L,
                      researcher_email = "klaus.frieler@ae.mpg.de",
                      language = c("en", "de", "de_f")){
   elts <- psychTestR::join(
-    SRS_welcome_page(dict = dict),
+    SRS_welcome_page(dict = dict, timeout = timeout),
     SRS(num_items = num_items, with_welcome = F, with_feedback = T, with_training = T, with_finish =  F, timeout = timeout),
     SRS_final_page(dict = dict)
   )
