@@ -38,7 +38,13 @@ get_ART_item_sequence2 <- function(num_items = NULL, seed = NULL){
   return(list(items = items, num_writers = num_writers, num_foils = num_foils))
 }
 
-ART_item_page <- function(item_number, item, num_items_in_test, mode = "pairs", dict = mpipoet::mpipoet_dict, timeout = 10, on_complete = NULL){
+ART_item_page <- function(item_number,
+                          item,
+                          num_items_in_test,
+                          mode = "single",
+                          dict = mpipoet::mpipoet_dict,
+                          timeout = 10,
+                          on_complete = NULL){
   #browser()
   item <- as.data.frame(item)
   stopifnot(nrow(item) == 1)
@@ -73,6 +79,7 @@ ART_item_page <- function(item_number, item, num_items_in_test, mode = "pairs", 
                 labels = labels,
                 has_all_equal = F,
                 save_answer = T,
+                button_style = "width: 150px",
                 timeout = timeout,
                 on_complete = on_complete
   )

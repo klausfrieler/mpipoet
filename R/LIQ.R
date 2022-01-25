@@ -93,7 +93,7 @@ LIQ_standalone  <- function(title = NULL,
 
 validate_multi_text <- function(answer, ...){
   elems <- strsplit(answer, ",")[[1]]
-  tmp <- lapply(elems, function(x) !is.na(as.integer(x)))
+  tmp <- lapply(elems, function(x) !is.na(as.integer(gsub(",", ".", x))))
   length(elems) == sum(unlist(tmp))
 }
 
