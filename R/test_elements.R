@@ -270,7 +270,7 @@ multi_text_input_page <- function(label,
   get_answer <- function(input, ...) {
     tmp <- shiny::reactiveValuesToList(input)
     elems <- sort(names(tmp)[grepl(sprintf("%s_text_input[0-9]+", label),names(tmp))])
-    paste(tmp[elems], collapse = ",")
+    paste(gsub(",", ".",tmp[elems]), collapse = ",")
   }
   body = shiny::div(
     #onload = paste(sprintf("document.getElementById('text_input%d').value = '';", 1:num_inputs), collapse = ""),
