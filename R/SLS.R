@@ -146,13 +146,13 @@ SLS_scoring <- function(label){
     results <- results %>% dplyr::bind_rows() %>%
       mutate(total_time = cumsum(tidyr::replace_na(time,0)), cum_correct = cumsum(tidyr::replace_na(correct, 0)))
     results_red <- results %>% filter(total_time <= 3 * 60 * 1000)
-    psychTestR::save_result(state, label = "perc_correct_total", value = mean(results$correct))
-    psychTestR::save_result(state, label = "num_items_total", value = nrow(results))
-    psychTestR::save_result(state, label = "num_correct_total", value = sum(results$correct))
-    psychTestR::save_result(state, label = "perc_correct", value = mean(results_red$correct))
+    psychTestR::save_result(state, label = "perc_correct_total", value = mean(results$correct, na.rm = T))
+    psychTestR::save_result(state, label = "num_items_total", value = nrow(results, na.rm = T))
+    psychTestR::save_result(state, label = "num_correct_total", value = sum(results$correct, na.rm = T))
+    psychTestR::save_result(state, label = "perc_correct", value = mean(results_red$correct, na.rm = T))
     psychTestR::save_result(state, label = "num_items", value = nrow(results_red))
-    psychTestR::save_result(state, label = "num_correct", value = sum(results_red$correct))
-    psychTestR::save_result(state, label = "total_time", value = max(results$total_time))
+    psychTestR::save_result(state, label = "num_correct", value = sum(results_red$correct, na.rm = T))
+    psychTestR::save_result(state, label = "total_time", value = max(results$total_time, na.rm = T))
   })
 }
 
