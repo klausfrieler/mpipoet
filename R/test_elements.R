@@ -207,12 +207,13 @@ no_button_page <-function(body, button_text, admin_ui = NULL){
 auto_proceed_info_page <- function(body, timeout = 1500L, style = "height:200px", admin_ui = NULL){
   timer_script <- sprintf("var myTimer = true;
                           can_advance = true;
+                          log_key_flag = false;
                           if(myTimer)window.clearTimeout(myTimer);
                           myTimer = window.setTimeout(function(){
                           if(can_advance){
                           Shiny.onInputChange('next_page', performance.now());
-                          console.log('TIMEOUT')}}, %d);
-                          console.log('Set timer: ' + %d + 's');", timeout, timeout)
+                          console.log('AUTO PROCEED: TIMEOUT')}}, %d);
+                          console.log('AUTO PROCEED: Set timer: ' + %d + 's');", timeout, timeout)
   body <-
     shiny::tags$div(
       tagify(body),

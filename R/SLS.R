@@ -197,7 +197,7 @@ SLS_feedback_with_score <- function(dict = mpipoet::mpipoet_dict){
   psychTestR::new_timeline(
     psychTestR::reactive_page(function(state,...){
       results <- psychTestR::get_results(state = state, complete = TRUE, add_session_info = F) %>% as.list()
-      #browser()
+      browser()
       text <- shiny::div(
         shiny::tags$script("window.onkeypress = null;"),
         shiny::p(psychTestR::i18n("SLS_FEEDBACK",

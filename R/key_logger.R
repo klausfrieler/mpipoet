@@ -1,11 +1,11 @@
 key_logger_script_SLS <- "
 var time_points = [];
-
+log_key_flag = true;
 document.getElementById('marker_seq').style.visibility = 'hidden';
 window.startTime = new Date().getTime();
 
 window.onkeypress = register_key
-console.log('Added keypress event listener')
+console.log('Added keypress event listener, log_key_flag = ' + log_key_flag)
 
 String.prototype.toMMSSZZ = function () {
     var msec_num = parseInt(this, 10); // don't forget the second param
@@ -21,18 +21,23 @@ String.prototype.toMMSSZZ = function () {
     return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0') + '.' + String(milliseconds).padStart(3, '0');
 }
 function register_key(e) {
+  if(!log_key_flag){
+    console.log('SLS Register key blocked')
+    return;
 
+  }
   var key = e.which || e.keyCode;
-    console.log('Pressed key:' + key)
+    console.log('SLS: Pressed key:' + key)
   if (key != 102 && key != 106) { // 'j' and 'f'
     // do nothing
-    console.log('Invalid key')
+    console.log('SLS: Invalid key')
     return;
   }
 	var tp = new Date().getTime() - window.startTime
   time_points.push(tp);
   time_points.push(key);
-  console.log('Time: ' + tp)
+  console.log('SLS: Time: ' + tp)
+  log_key_flag = false;
   Shiny.setInputValue('marker_seq', time_points.join(':'));
   Shiny.onInputChange('next_page', performance.now())
 }
@@ -43,22 +48,21 @@ window.onkeypress = shiny_next
 function shiny_next(e) {
 
   var key = e.which || e.keyCode;
-  console.log('Pressed key:' + key);
-  //if (key != 102 && key != 106) { // 'j' and 'f'
+  console.log('KPS: Pressed key:' + key)
+  if (key != 102 && key != 106) { // 'j' and 'f'
     // do nothing
-    //console.log('Invalid key')
-  //  return
-  //}
+    console.log('KPS Invalid key')
+    return
+  }
   window.onkeypress = null;
   console.log('KPS: removed keypress event listener')
   Shiny.onInputChange('next_page', performance.now())
 }
-alter(window.onkeypress)
 "
 
 clean_up_script <- "
   window.onkeypress = null;
 
   //window.removeEventListener('keydown', register_key, false);
-  console.log('Removed keydown listener');
+  console.log('CLUS: Removed keydown listener');
 "

@@ -95,7 +95,7 @@ make_SRS_practice_page <- function(timeout = 10, practice_state){
     page <-
       psychTestR::join(
         psychTestR::one_button_page(body = shiny::div(
-          shiny::tags$script("can_advance = false;"),
+          shiny::tags$script("can_advance = false;window.clearTimeout(myTimer);console.log('SRS: CLEARED TIMER')"),
           shiny::h4(psychTestR::i18n(sprintf("SRS_EXAMPLE%d", example_no))),
           shiny::p(psychTestR::i18n(sprintf("SRS_EXAMPLE_FEEDBACK_CORRECT%d", example_no))),
           shiny::p(make_correct_buttons(practice_state$example_no))),
