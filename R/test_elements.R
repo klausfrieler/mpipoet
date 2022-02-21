@@ -194,12 +194,12 @@ make_ui_NAFC_with_keys <- function(id = "response_ui",...) {
   shiny::tags$div(id = id, marker_input, shiny::tags$script(shiny::HTML(key_logger_script_SLS)))
 }
 
-no_button_page <-function(body, button_text, admin_ui = NULL){
+no_button_page <-function(body, button_text, button_style = "background-color:#ffffff;font-weight:bold", admin_ui = NULL){
     body <-
       shiny::tags$div(
       tagify(body),
       shiny::tags$script(shiny::HTML(key_proceed_script)),
-      psychTestR::trigger_button("next", button_text, style="background-color:#ffffff;")
+      psychTestR::trigger_button("next", button_text, style = button_style, enable_after = 100)
     )
     psychTestR::page(ui = body, admin_ui = admin_ui, final = FALSE)
 }
