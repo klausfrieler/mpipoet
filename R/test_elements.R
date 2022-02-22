@@ -194,7 +194,7 @@ make_ui_NAFC_with_keys <- function(id = "response_ui",...) {
   shiny::tags$div(id = id, marker_input, shiny::tags$script(shiny::HTML(key_logger_script_SLS)))
 }
 
-no_button_page <-function(body, button_text, button_style = "background-color:#ffffff;font-weight:bold", admin_ui = NULL){
+no_button_page <-function(body, button_text, button_style = "font-weight:bold", admin_ui = NULL){
     body <-
       shiny::tags$div(
       tagify(body),
