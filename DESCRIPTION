@@ -1,6 +1,6 @@
 Package: mpipoet
 Title: Collection of tests and questionnaires for empirical poetry research
-Version: 1.4.5
+Version: 1.4.6
 Authors@R: c(
   person("Klaus", "Frieler", email = "kf@omniversum.de", role = c("aut","cre")),
   person("Blohm", "Stefan", email = "stefan.blohm@ae.mpg.de.de", role = c("ctb")),
@@ -35,4 +35,4 @@ Suggests:
     covr,
     devtools,
 Remotes: pmcharrison/psychTestR
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3

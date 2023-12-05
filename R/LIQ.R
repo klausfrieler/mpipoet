@@ -175,6 +175,9 @@ LIQ_final_page <- function(dict = mpipoet::mpipoet_dict){
 }
 
 parse_LIQ_results <- function(results){
+  if(is.null(results)){
+    return(NULL)
+  }
   if("LIQ" %in% names(results)){
     LIQ <- results$LIQ
   }
@@ -186,7 +189,9 @@ parse_LIQ_results <- function(results){
     if(is.null(labels)){
       labels <- sprintf("item%d", 1:length(tmp))
     }
-
+    if(length(labels) > length(tmp)){
+      tmp <- c(tmp, rep(0, length(labels) - length(tmp)))
+    }
     stopifnot(length(labels) == length(tmp))
     names(tmp) <- sprintf("LIQ.%s", labels)
     tmp %>% t() %>% tibble::as_tibble()
